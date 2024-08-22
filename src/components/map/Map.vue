@@ -2,19 +2,19 @@
   <div>
     <div class="h-full w-[65vw]">
       <l-map
-         :use-global-leaflet="false"
-         ref="map"
-         v-model:zoom="zoom"
-        :center="[36.8065, 10.181667]"
+          :use-global-leaflet="false"
+          ref="map"
+          v-model:zoom="zoom"
+          :center="currentCenter"
       >
         <l-tile-layer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          layer-type="base"
-          name="OpenStreetMap"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            layer-type="base"
+            name="OpenStreetMap"
         ></l-tile-layer>
-      <div v-for="item in latlng">
-        <Marker :latlng="item"/>
-      </div>
+        <div v-for="item in latlng">
+          <Marker :latlng="item"/>
+        </div>
       </l-map>
     </div>
   </div>
@@ -22,11 +22,23 @@
 
 <script setup>
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet'
-import { ref } from "vue";
+import {LMap, LTileLayer} from '@vue-leaflet/vue-leaflet'
+import {onMounted, ref} from "vue";
 import Marker from '@/components/map/marker/Marker.vue'
 
-const latlng =  ref([
+const props = defineProps(['center'])
+const currentCenter = ref([])
+
+onMounted(() => {
+  if (props.center.lat && props.center.lng) {
+    currentCenter.value.push(props.center.lng, props.center.lat)
+  } else {
+    currentCenter.value = [36.8065, 10.181667]
+  }
+})
+
+
+const latlng = ref([
   [36.8065, 10.181667],
   [36.8065, 10.172667],
   [36.7065, 10.162667],

@@ -1,14 +1,13 @@
 <script setup lang="ts">
 
-import { RouterView } from 'vue-router'
-import NavBar from "@/components/layout/Navbar.vue";
+import {RouterView} from 'vue-router'
+
 
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <NavBar/>
-    <RouterView />
+  <div class="flex flex-col h-screen">
+    <RouterView/>
   </div>
 </template>
 
