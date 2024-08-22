@@ -23,13 +23,13 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import {LMap, LTileLayer} from '@vue-leaflet/vue-leaflet'
-import {onMounted, ref} from "vue";
+import {onBeforeMount, onMounted, ref} from "vue";
 import Marker from '@/components/map/marker/Marker.vue'
 
 const props = defineProps(['center'])
 const currentCenter = ref([])
 
-onMounted(() => {
+onBeforeMount(() => {
   if (props.center.lat && props.center.lng) {
     currentCenter.value.push(props.center.lng, props.center.lat)
   } else {

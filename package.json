@@ -19,6 +19,7 @@
     "@heroicons/vue": "^2.1.5",
     "@iconify/vue": "^4.1.2",
     "@preline/combobox": "^2.4.1",
+    "dotenv": "^16.4.5",
     "leaflet-geosearch": "^4.0.0",
     "preline": "^2.4.1",
     "radix-vue": "^1.9.4",

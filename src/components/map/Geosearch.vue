@@ -11,7 +11,7 @@ const router = useRouter()
 
 const provider = new MapBoxProvider({
   params: {
-    access_token: 'pk.eyJ1IjoiaGF0ZW0tdGVtaW1pIiwiYSI6ImNtMDE2ZWxkYzFmMHQycnIyZmVwNHBucXEifQ.1Ca9bPDHbgtbsoytvEvWJw',
+    access_token: import.meta.env.VITE_MAPBOX_TOKEN,
     country: 'tn',
   },
 });
