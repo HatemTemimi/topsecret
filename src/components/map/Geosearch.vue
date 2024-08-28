@@ -1,60 +1,64 @@
 <script setup lang="ts">
-import {MapBoxProvider} from 'leaflet-geosearch';
-import {ref} from "vue";
+import {VAutocomplete} from 'vuetify/components'
+import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
+import getPlaces from "@/api/getPlaces";
+import _ from 'lodash'
 
-const search = ref('')
+const model = ref(null)
 const results = ref([])
 const isOpen = ref(false)
+const loading = ref(false)
 
 const router = useRouter()
 
-const provider = new MapBoxProvider({
-  params: {
-    access_token: import.meta.env.VITE_MAPBOX_TOKEN,
-    country: 'tn',
-  },
-});
-
-/*
-const searchControl = new GeoSearchControl({
-  provider: provider,
-  autoComplete: true, // optional: true|false  - default true
-  autoCompleteDelay: 250
-}) ;
-*/
-
-// search
-const searchMap = async () => {
-  results.value = await provider.search({query: search.value});
-  isOpen.value = true;
+// Debounced search function using watch
+let timeoutId: number | null = null;
+const debouncedSearch = (val: string) => {
+  if (timeoutId) clearTimeout(timeoutId);
+  timeoutId = setTimeout(async () => {
+    if (!_.isEmpty(val)) {
+      results.value = await getPlaces(val)
+      isOpen.value = true;
+    }
+  }, 500);
 }
 
-const validateLocation = (loc) => {
-  search.value = location.label;
+watch(model, debouncedSearch, {immediate: true}); // Call search on initial render
+
+const validateLocation = () => {
+  const loc = model.value
   isOpen.value = false;
-  loc.x && loc.y ?
-      router.push({path: '/', query: {lat: loc.raw.center[0], lng: loc.raw.center[1]}})
-      : router.push(`/`)
-  console.log(results.value)
+  loc?.x && loc?.y ?
+      router.push({path: '/home', query: {lat: loc.raw.center[0], lng: loc.raw.center[1]}})
+      : router.push(`/home`)
 }
 </script>
 
 <template>
-  <div class="flex flex-col w-full items-center">
-    <input @keyup="searchMap" v-model="search" type="text" placeholder="search by location.."
-           class="rounded text-center w-1/4 h-10"/>
-    <ul v-if="isOpen && results.length > 0"
-        class="w-1/4 mt-1 border-2 border-slate-50 overflow-auto shadow-lg rounded list-none"
-    >
-      <li :class="[
-  'hover:bg-blue-100 hover:text-blue-800',
-  'w-full list-none text-left py-2 px-3 cursor-pointer']"
-          v-for="(location,i) in results" :key="i"
-          @click="validateLocation(location)"
-      >
-        {{ location.label }}
-      </li>
-    </ul>
-  </div>
+  <v-card class="w-1/3 h-1/3 flex justify-center items-center p-8"
+          density="comfortable"
+          :loading="loading"
+  >
+    <v-autocomplete
+        clearable
+        focused
+        hide-no-data
+        label="Choose location for results.."
+        :items="results"
+        v-model="model"
+        item-title="place_name"
+        no-filter
+        return-object
+        @focus="loading=true"
+        @blur="loading=false"
+        @update:search="debouncedSearch"
+        validate-on="blur"
+        @update:modelValue="validateLocation()"
+    ></v-autocomplete>
+  </v-card>
 </template>
+
+<style scoped>
+
+</style>
