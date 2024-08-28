@@ -1,59 +1,58 @@
 <script setup lang="ts">
 import {VAutocomplete} from 'vuetify/components'
-import {MapBoxProvider} from 'leaflet-geosearch';
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
-import axios from "axios";
-
+import getPlaces from "@/api/getPlaces";
+import _ from 'lodash'
 
 const model = ref(null)
 const results = ref([])
+const isOpen = ref(false)
 const loading = ref(false)
 
 const router = useRouter()
 
-const provider = new MapBoxProvider({
-  params: {
-    access_token: import.meta.env.VITE_MAPBOX_TOKEN,
-    country: 'tn',
-    autofill: true,
-  },
-});
-
-//const url = 'https://api.mapbox.com/autofill/v1/suggest/aut?types=address&access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p0MG01MXRqMW45cjQzb2R6b2ptc3J4MSJ9.zA2W0IkI0c6KaAhJfk9bWg&streets=true&language=en&session_token=0fb40925-45fc-4971-8919-4126168062b6&proximity=ip'
-
-axios.get('https://api.mapbox.com/autofill/v1/suggest/aut?types=address&access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p0MG01MXRqMW45cjQzb2R6b2ptc3J4MSJ9.zA2W0IkI0c6KaAhJfk9bWg&streets=true&language=en&session_token=0fb40925-45fc-4971-8919-4126168062b6&proximity=ip')
-// search
-const searchMap = async (val) => {
-  loading.value = true
-  results.value = await provider.search({query: val});
-  console.log(results.value)
+// Debounced search function using watch
+let timeoutId: number | null = null;
+const debouncedSearch = (val: string) => {
+  if (timeoutId) clearTimeout(timeoutId);
+  timeoutId = setTimeout(async () => {
+    if (!_.isEmpty(val)) {
+      results.value = await getPlaces(val)
+      isOpen.value = true;
+    }
+  }, 500);
 }
+
+watch(model, debouncedSearch, {immediate: true}); // Call search on initial render
 
 const validateLocation = () => {
   const loc = model.value
-  loading.value = false
-  console.log(loc.x, loc.y)
+  isOpen.value = false;
+  loc?.x && loc?.y ?
+      router.push({path: '/home', query: {lat: loc.raw.center[0], lng: loc.raw.center[1]}})
+      : router.push(`/home`)
 }
 </script>
 
 <template>
-  <v-card class="w-full h-1/3 flex justify-center items-center p-8"
+  <v-card class="w-1/3 h-1/3 flex justify-center items-center p-8"
           density="comfortable"
           :loading="loading"
   >
     <v-autocomplete
-        autofocus
         clearable
         focused
         hide-no-data
         label="Choose location for results.."
         :items="results"
         v-model="model"
-        item-title="label"
+        item-title="place_name"
         no-filter
         return-object
-        @update:search="(val)=> searchMap(val)"
+        @focus="loading=true"
+        @blur="loading=false"
+        @update:search="debouncedSearch"
         validate-on="blur"
         @update:modelValue="validateLocation()"
     ></v-autocomplete>
