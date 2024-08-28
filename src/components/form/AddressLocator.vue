@@ -12,11 +12,9 @@
             layer-type="base"
             name="OpenStreetMap"
         ></l-tile-layer>
-        <div v-for="item in latlng">
-          <l-marker @ready="()=> console.log('marker ready')"
-                    @update:latLng="(val)=> console.log('update happened', val)"
-                    :draggable=true :lat-lng="item"></l-marker>
-        </div>
+        <l-marker @ready="()=> console.log('marker ready')"
+                  @update:latLng="(val)=> console.log('update happened', val)"
+                  :draggable=true :lat-lng="currentCenter"></l-marker>
       </l-map>
     </div>
   </div>
@@ -27,16 +25,15 @@ import "leaflet/dist/leaflet.css";
 import {LMap, LTileLayer, LMarker} from '@vue-leaflet/vue-leaflet'
 import {onBeforeMount, ref} from "vue";
 
-const currentCenter = ref([])
+import {inject} from 'vue'
+
+const {marker, updateMarker} = inject('location')
+
+const currentCenter = ref(marker)
 
 onBeforeMount(() => {
-  currentCenter.value = [36.8065, 10.181667]
+  currentCenter.value = marker.value
 })
-
-
-const latlng = ref([
-  [36.8065, 10.181667],
-])
 
 const zoom = ref(20)
 

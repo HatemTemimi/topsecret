@@ -29,8 +29,8 @@ watch(model, debouncedSearch, {immediate: true}); // Call search on initial rend
 const validateLocation = () => {
   const loc = model.value
   isOpen.value = false;
-  loc?.x && loc?.y ?
-      router.push({path: '/home', query: {lat: loc.raw.center[0], lng: loc.raw.center[1]}})
+  loc?.center ?
+      router.push({path: '/home', query: {lat: loc.center[0], lng: loc.center[1]}})
       : router.push(`/home`)
 }
 </script>

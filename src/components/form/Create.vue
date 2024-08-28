@@ -2,8 +2,7 @@
 import {reactive} from 'vue'
 import {useVuelidate} from '@vuelidate/core'
 import {email, required} from '@vuelidate/validators'
-import AddressAutofill from "@/components/form/AddressAutofill.vue";
-import MapWithLocator from "@/components/form/AddressLocator.vue";
+import Address from "@/components/form/Address.vue";
 
 const initialState = {
   name: '',
@@ -46,8 +45,7 @@ function clear() {
 <template>
   <v-form fast-fail>
     <v-card title="Address" class="p-4">
-      <AddressAutofill/>
-      <MapWithLocator/>
+      <Address/>
     </v-card>
 
 
