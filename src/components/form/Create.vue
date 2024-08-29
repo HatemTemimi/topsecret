@@ -48,8 +48,7 @@ function clear() {
       <Address/>
     </v-card>
 
-
-    <v-card title="Info" class="p-4 mt-4">
+    <v-card title="Info" class="p-4 mt-4" hidden>
       <v-text-field
           v-model="state.name"
           :counter="10"

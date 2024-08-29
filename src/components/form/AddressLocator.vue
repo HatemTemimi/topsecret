@@ -24,6 +24,7 @@
 import "leaflet/dist/leaflet.css";
 import {LMap, LTileLayer, LMarker} from '@vue-leaflet/vue-leaflet'
 import {onBeforeMount, ref} from "vue";
+import getAddress from "@/api/getAddress.ts";
 
 import {inject} from 'vue'
 
@@ -33,6 +34,10 @@ const currentCenter = ref(marker)
 
 onBeforeMount(() => {
   currentCenter.value = marker.value
+  getAddress(currentCenter.value[1], currentCenter.value[0])
+      .then((val) => {
+        console.log(val)
+      })
 })
 
 const zoom = ref(20)
