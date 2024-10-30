@@ -11,7 +11,6 @@ type PlacesHandler struct {
 	Service *service.PlacesService
 }
 
-// GetPlaces is an HTTP handler that retrieves place suggestions from the Google Places API
 func (handler *PlacesHandler) GetPlaces(c echo.Context) error {
 	// Get the 'input' query parameter from the request
 	input := c.QueryParam("input")

@@ -20,13 +20,14 @@ export async function getPlacesMapBox(query: string) {
 
 export async function getPlacesGoogle(query: string) {
     const response = await axios.get(
-      `http://localhost:3001/api/google-places`,
+      `http://localhost:3001/api/places`,
       {
           params: {
               input: query,
           }
       }
     );
+    console.log(response);
     return response.data.predictions;
 }
 

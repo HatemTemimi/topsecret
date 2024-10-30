@@ -18,12 +18,9 @@ import (
 
 type Server struct {
 	router *Router
-	echo   *echo.Echo
 }
 
-func (s *Server) SetupAndLaunch() {
-
-	s.echo = echo.New()
+func (s *Server) SetupAndLaunch(e *echo.Echo) {
 
 	// Get the API key from environment variables or configuration
 	env := os.Getenv("GO_ENV")
@@ -63,9 +60,11 @@ func (s *Server) SetupAndLaunch() {
 		PlacesHandler: placesHandler,
 	}
 
+	s.router.Init(e)
+
 	go func() {
-		if err := s.echo.Start(fmt.Sprintf(":%s", port)); err != nil && err != http.ErrServerClosed {
-			s.echo.Logger.Fatal("shutting down the server")
+		if err := e.Start(fmt.Sprintf(":%s", port)); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal("shutting down the server")
 		}
 	}()
 
@@ -77,7 +76,7 @@ func (s *Server) SetupAndLaunch() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	if err := s.echo.Shutdown(ctx); err != nil {
-		s.echo.Logger.Fatal("Error during shutdown:", err)
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal("Error during shutdown:", err)
 	}
 }
