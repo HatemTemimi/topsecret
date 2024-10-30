@@ -2,7 +2,7 @@
 import {VAutocomplete} from 'vuetify/components'
 import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
-import getPlaces from "@/api/getPlaces";
+import { getPlacesGoogle } from "@/api/getPlaces";
 import _ from 'lodash'
 
 const model = ref(null)
@@ -18,13 +18,14 @@ const debouncedSearch = (val: string) => {
   if (timeoutId) clearTimeout(timeoutId);
   timeoutId = setTimeout(async () => {
     if (!_.isEmpty(val)) {
-      results.value = await getPlaces(val)
+      results.value = await getPlacesGoogle(val)
+      console.log(results.value)
       isOpen.value = true;
     }
   }, 500);
 }
 
-watch(model, debouncedSearch, {immediate: true}); // Call search on initial render
+watch(model, debouncedSearch, {immediate: true});
 
 const validateLocation = () => {
   const loc = model.value
@@ -47,7 +48,7 @@ const validateLocation = () => {
         label="Choose location for results.."
         :items="results"
         v-model="model"
-        item-title="place_name"
+        item-title="description"
         no-filter
         return-object
         @focus="loading=true"

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default async function getPlaces(query: string) {
+export async function getPlacesMapBox(query: string) {
     try {
         const response = await axios.get(
             `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json`,
@@ -14,6 +14,19 @@ export default async function getPlaces(query: string) {
 
         return response.data.features;
     } catch (error) {
-        console.error("There was an error while fetching places:", error);
+        throw new Error("There was an error while fetching places")
     }
 }
+
+export async function getPlacesGoogle(query: string) {
+    const response = await axios.get(
+      `http://localhost:3001/api/google-places`,
+      {
+          params: {
+              input: query,
+          }
+      }
+    );
+    return response.data.predictions;
+}
+

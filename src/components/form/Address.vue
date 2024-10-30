@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {VAutocomplete} from 'vuetify/components'
 import {ref, watch} from "vue";
-import getPlaces from "@/api/getPlaces";
+import {getPlacesGoogle} from "@/api/getPlaces";
 import _ from 'lodash'
 import AddressLocator from "@/components/form/AddressLocator.vue";
 import {provide} from 'vue'

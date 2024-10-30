@@ -1,5 +1,5 @@
 {
-  "name": "binomi",
+  "name": "client",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -48,7 +48,7 @@
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.5.1",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-plugin-playwright": "^1.6.2",
     "eslint-plugin-vue": "^9.23.0",
     "jsdom": "^24.1.0",

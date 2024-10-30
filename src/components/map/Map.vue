@@ -23,7 +23,7 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import {LMap, LTileLayer} from '@vue-leaflet/vue-leaflet'
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onBeforeMount, ref} from "vue";
 import Marker from '@/components/map/marker/Marker.vue'
 
 const props = defineProps(['center'])
@@ -36,7 +36,6 @@ onBeforeMount(() => {
     currentCenter.value = [36.8065, 10.181667]
   }
 })
-
 
 const latlng = ref([
   [36.8065, 10.181667],
