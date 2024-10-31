@@ -30,6 +30,7 @@ const props = defineProps(['center'])
 const currentCenter = ref([])
 
 onBeforeMount(() => {
+  console.log(props);
   if (props.center.lat && props.center.lng) {
     currentCenter.value.push(props.center.lng, props.center.lat)
   } else {

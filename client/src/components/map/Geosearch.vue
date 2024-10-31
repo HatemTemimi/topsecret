@@ -30,7 +30,11 @@ const validateLocation = async (model) => {
   const loc = model.value
   isOpen.value = false;
   const placeDetails = await getPlaceDetails(model.place_id)
-  loc?.center ?
+  console.log(
+  'lat',placeDetails.geometry.location.lat,
+  'lng',placeDetails.geometry.location.lng
+  )
+  //loc?.geometry.location ?
       router.push({
         path: '/home',
        query: {
@@ -38,7 +42,7 @@ const validateLocation = async (model) => {
         lng: placeDetails.geometry.location.lng
       }
     })
-      : router.push(`/home`)
+    //  : router.push(`/home`)
 
 
 }
