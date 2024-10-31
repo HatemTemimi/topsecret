@@ -36,7 +36,7 @@ func (handler *PlacesHandler) GetPlaceDetails(c echo.Context) error {
 	}
 
 	// Call the service to fetch place details
-	placeDetails, err := handler.Service.GetPlaces(placeId)
+	placeDetails, err := handler.Service.GetPlaceDetails(placeId)
 	if err != nil {
 		// Log the error and return an internal server error
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
