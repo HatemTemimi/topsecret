@@ -17,7 +17,7 @@ let timeoutId: number | null = null;
 const debouncedSearch = (val: string) => {
   if (timeoutId) clearTimeout(timeoutId);
   timeoutId = setTimeout(async () => {
-    if (!_.isEmpty(val)) {
+    if (!_.isEmpty(val) && model.value===null) {
       results.value = await getPlacesGoogle(val)
       isOpen.value = true;
     }
