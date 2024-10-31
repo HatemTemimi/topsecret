@@ -2,7 +2,7 @@
 import {VAutocomplete} from 'vuetify/components'
 import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
-import { getPlacesGoogle } from "@/api/getPlaces";
+import { getPlaceDetails, getPlacesGoogle } from "@/api/getPlaces";
 import _ from 'lodash'
 
 const model = ref(null)
@@ -19,7 +19,6 @@ const debouncedSearch = (val: string) => {
   timeoutId = setTimeout(async () => {
     if (!_.isEmpty(val)) {
       results.value = await getPlacesGoogle(val)
-      console.log(results.value)
       isOpen.value = true;
     }
   }, 500);
@@ -27,12 +26,21 @@ const debouncedSearch = (val: string) => {
 
 watch(model, debouncedSearch, {immediate: true});
 
-const validateLocation = () => {
+const validateLocation = async (model) => {
   const loc = model.value
   isOpen.value = false;
+  const placeDetails = await getPlaceDetails(model.place_id)
   loc?.center ?
-      router.push({path: '/home', query: {lat: loc.center[0], lng: loc.center[1]}})
+      router.push({
+        path: '/home',
+       query: {
+        lat: placeDetails.geometry.location.lat,
+        lng: placeDetails.geometry.location.lng
+      }
+    })
       : router.push(`/home`)
+
+
 }
 </script>
 
@@ -55,7 +63,7 @@ const validateLocation = () => {
         @blur="loading=false"
         @update:search="debouncedSearch"
         validate-on="blur"
-        @update:modelValue="validateLocation()"
+        @update:modelValue="(model)=>validateLocation(model)"
     ></v-autocomplete>
   </v-card>
 </template>

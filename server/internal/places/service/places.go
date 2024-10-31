@@ -59,15 +59,12 @@ func (service *PlacesService) GetPlaces(input string) (map[string]interface{}, e
 // receives a placeID, and returns details such as lat, lng
 func (service *PlacesService) GetPlaceDetails(placeID string) (map[string]interface{}, error) {
 
-	fmt.Println("hit the placesDetails")
 	if placeID == "" {
 		return nil, errors.New("no placeID provided")
 	}
 
-	fmt.Println(placeID)
-
 	query := fmt.Sprintf(
-		"https://maps.googleapis.com/maps/api/place/details/json?fields=geometry&place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&key=%s",
+		"https://maps.googleapis.com/maps/api/place/details/json?fields=geometry%%2Cname&place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&key=%s",
 		service.ApiKey,
 	)
 

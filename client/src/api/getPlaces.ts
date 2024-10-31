@@ -27,9 +27,18 @@ export async function getPlacesGoogle(query: string) {
           }
       }
     );
-    console.log(response);
     return response.data.predictions;
 }
 
-
-export async function getPlacesDetails(placeID: string){ }
+export async function getPlaceDetails(placeID: string){
+    const response = await axios.get(
+        `http://localhost:3001/api/placeDetails`,
+        {
+            params: {
+                place_id: placeID
+            }
+        }
+    )
+    console.log(response);
+    return response.data.result
+}

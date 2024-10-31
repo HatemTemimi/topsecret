@@ -20,7 +20,7 @@ func (router *Router) Init(e *echo.Echo) {
 		return c.String(http.StatusOK, "All Good!")
 	})
 
-	e.GET("/api/placesDetails", router.PlacesHandler.GetPlaceDetails)
+	e.GET("/api/placeDetails", router.PlacesHandler.GetPlaceDetails)
 	e.GET("/api/places", router.PlacesHandler.GetPlaces)
 
 }
