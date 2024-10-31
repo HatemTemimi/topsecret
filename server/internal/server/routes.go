@@ -20,7 +20,6 @@ func (router *Router) Init(e *echo.Echo) {
 	})
 
 	e.GET("/api/places", router.PlacesHandler.GetPlaces)
+	e.GET("/api/placesDetails", router.PlacesHandler.GetPlaceDetails)
 
-	// Start the server on port 3001
-	//e.Logger.Fatal(e.Start(":3001"))
 }

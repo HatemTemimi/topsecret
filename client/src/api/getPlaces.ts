@@ -31,3 +31,5 @@ export async function getPlacesGoogle(query: string) {
     return response.data.predictions;
 }
 
+
+export async function getPlacesDetails(placeID: string){ }
