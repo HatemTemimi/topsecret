@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default async function getAddress(longitude: string, latitude: string) {
+export async function getAddress(longitude: string, latitude: string) {
     try {
         const response = await axios.get(
             `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${longitude}&latitude=${latitude}`,

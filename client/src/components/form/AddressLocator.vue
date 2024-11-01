@@ -24,7 +24,7 @@
 import "leaflet/dist/leaflet.css";
 import {LMap, LTileLayer, LMarker} from '@vue-leaflet/vue-leaflet'
 import {onBeforeMount, ref} from "vue";
-import getAddress from "@/api/getAddress.ts";
+import {getAddress} from "@/api/getAddress.ts";
 
 import {inject} from 'vue'
 
