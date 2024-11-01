@@ -22,5 +22,6 @@ func (router *Router) Init(e *echo.Echo) {
 
 	e.GET("/api/placeDetails", router.PlacesHandler.GetPlaceDetails)
 	e.GET("/api/places", router.PlacesHandler.GetPlaces)
+	e.GET("/api/address/lookup", router.PlacesHandler.GetAddressFromLatLng)
 
 }
