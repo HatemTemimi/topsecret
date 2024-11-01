@@ -45,3 +45,18 @@ func (handler *PlacesHandler) GetPlaceDetails(c echo.Context) error {
 	// Return the placeDetails response as JSON
 	return c.JSON(http.StatusOK, placeDetails)
 }
+
+func (handler *PlacesHandler) GetAddressFromLatLng(c echo.Context) error {
+	latitude := c.QueryParam("latitude")
+	longitude := c.QueryParam("longitude")
+	if latitude == "" || longitude == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "both latitude and longitude are required"})
+	}
+
+	addressDetails, err := handler.Service.GetAddressFromLatLng(latitude, longitude)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, addressDetails)
+}
