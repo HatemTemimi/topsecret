@@ -85,7 +85,32 @@ func (service *PlacesService) GetPlaceDetails(placeID string) (map[string]interf
 	return placeDetails, nil
 }
 
-// returns address
-func (service *PlacesService) GetAddress(placeID string) (map[string]interface{}, error) {
-	return nil, nil
+// returns address from latitude and longitude
+func (service *PlacesService) GetAddressFromLatLng(latitude string, longitude string) (map[string]interface{}, error) {
+	if latitude == "" || longitude == "" {
+		return nil, errors.New("both latitude and longitude are required")
+	}
+
+	query := fmt.Sprintf(
+		"https://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s&key=%s",
+		latitude, longitude, service.ApiKey,
+	)
+
+	resp, err := service.Client.Get(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get address from geocoding")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("address geocode api returned non-200 status: %d", resp.StatusCode)
+	}
+
+	var address map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&address); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %v", err)
+	}
+
+	return address, nil
+
 }
