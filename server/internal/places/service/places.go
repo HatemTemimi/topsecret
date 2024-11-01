@@ -24,7 +24,6 @@ func NewPlacesService(apiKey string) *PlacesService {
 
 func (service *PlacesService) GetPlaces(input string) (map[string]interface{}, error) {
 
-	fmt.Println("hit the places")
 	if input == "" {
 		return nil, errors.New("input cannot be empty")
 	}
