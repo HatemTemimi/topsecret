@@ -64,8 +64,8 @@ func (service *PlacesService) GetPlaceDetails(placeID string) (map[string]interf
 	}
 
 	query := fmt.Sprintf(
-		"https://maps.googleapis.com/maps/api/place/details/json?fields=geometry%%2Cname&place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&key=%s",
-		service.ApiKey,
+		"https://maps.googleapis.com/maps/api/place/details/json?fields=geometry%%2Cname&place_id=%s&key=%s",
+		placeID, service.ApiKey,
 	)
 
 	resp, err := service.Client.Get(query)
