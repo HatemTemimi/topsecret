@@ -80,7 +80,6 @@ import Address from "@/components/form/Address.vue";
 
 // Initial form state
 const initialState = {
-  select: null,
   checkbox: null,
   streetNumber: '',
   street: '',
@@ -94,7 +93,6 @@ const state = reactive({
 });
 
 const rules = {
-  select: { required },
   items: { required },
   checkbox: { required },
   streetNumber: { required },
@@ -125,6 +123,17 @@ provide('location', {
   marker,
   updateMarker,
 });
+// Provide a function to update info section fields from Address component
+function updateInfo(newInfo) {
+  state.streetNumber = newInfo.streetNumber || '';
+  state.street = newInfo.street || '';
+  state.city = newInfo.city || '';
+  state.country = newInfo.country || '';
+  state.fullAddress = newInfo.fullAddress || '';
+}
+
+// Provide the updateInfo function for Address component to access
+provide('updateInfo', updateInfo);
 </script>
 
 <style scoped>
