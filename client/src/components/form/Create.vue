@@ -1,10 +1,8 @@
 <template>
   <v-form fast-fail>
-    <v-card title="Address" class="p-4">
       <Address />
-    </v-card>
 
-    <v-card title="Info" class="p-4 mt-4">
+    <v-card title="Address details" class="p-4">
       <v-text-field
           v-model="state.streetNumber"
           :error-messages="v$.streetNumber.$errors.map(e => e.$message)"
