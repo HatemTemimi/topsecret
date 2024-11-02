@@ -58,8 +58,6 @@ function debounce(func, delay) {
 const debouncedGetAddressFromLatLng = debounce(async (lat, lng) => {
   try {
     const response = await getAddressFromLatLng(lat, lng);
-    console.log(response);
-
     // Parse the address components and map to the fields
     const addressData = {
       streetNumber: '',
