@@ -39,6 +39,19 @@ export async function getPlaceDetails(placeID: string){
             }
         }
     )
-    console.log(response);
     return response.data.result
 }
+
+export async function getAddressFromLatLng(latitude: string, longitude: string){
+    const response = await axios.get(
+        `http://localhost:3001/api/address/lookup`,
+        {
+            params: {
+                latitude: latitude,
+                longitude: longitude
+            }
+        }
+    )
+    return response.data
+}
+

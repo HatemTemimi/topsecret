@@ -25,7 +25,6 @@ const debouncedSearch = (val: string) => {
 watch(model, debouncedSearch, {immediate: true}); // Call search on initial render
 
 function updateMarker(val) {
-  console.log("updating marker..")
   marker.value = val
 }
 
@@ -35,25 +34,10 @@ provide('location', {
 })
 
 const validateLocation = async (model) => {
-  console.log(model)
   const details = await getPlaceDetails(model.place_id)
-  console.log(details)
- /* const lat = model.value.center[1]
-  model.value.center[1] = model.value.center[0]
-  model.value.center[0] = lat
-  */
-  //marker.value.push(model.value.geometry.location)
-
   const tmp = []
   tmp.push(details.geometry.location.lat, details.geometry.location.lng)
-  
-  console.log("marker")
-
   marker.value = tmp
-
-  console.log(marker.value)
-  //set marker position on locator map
-
 }
 </script>
 
