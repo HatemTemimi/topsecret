@@ -1,82 +1,54 @@
-<script setup>
-import {reactive} from 'vue'
-import {useVuelidate} from '@vuelidate/core'
-import {email, required} from '@vuelidate/validators'
-import Address from "@/components/form/Address.vue";
-
-const initialState = {
-  name: '',
-  email: '',
-  select: null,
-  checkbox: null,
-}
-
-const state = reactive({
-  ...initialState,
-})
-
-const items = [
-  'Item 1',
-  'Item 2',
-  'Item 3',
-  'Item 4',
-]
-
-const rules = {
-  name: {required},
-  email: {required, email},
-  select: {required},
-  items: {required},
-  checkbox: {required},
-}
-
-const v$ = useVuelidate(rules, state)
-
-function clear() {
-  v$.value.$reset()
-
-  for (const [key, value] of Object.entries(initialState)) {
-    state[key] = value
-  }
-}
-
-</script>
-
 <template>
   <v-form fast-fail>
     <v-card title="Address" class="p-4">
-      <Address/>
+      <Address />
     </v-card>
 
-    <v-card title="Info" class="p-4 mt-4" hidden>
+    <v-card title="Info" class="p-4 mt-4">
       <v-text-field
-          v-model="state.name"
-          :counter="10"
-          :error-messages="v$.name.$errors.map(e => e.$message)"
-          label="Name"
+          v-model="state.streetNumber"
+          :error-messages="v$.streetNumber.$errors.map(e => e.$message)"
+          label="Street Number"
           required
-          @blur="v$.name.$touch"
-          @input="v$.name.$touch"
+          @blur="v$.streetNumber.$touch"
+          @input="v$.streetNumber.$touch"
       ></v-text-field>
 
       <v-text-field
-          v-model="state.email"
-          :error-messages="v$.email.$errors.map(e => e.$message)"
-          label="E-mail"
+          v-model="state.street"
+          :error-messages="v$.street.$errors.map(e => e.$message)"
+          label="Street"
           required
-          @blur="v$.email.$touch"
-          @input="v$.email.$touch"
+          @blur="v$.street.$touch"
+          @input="v$.street.$touch"
       ></v-text-field>
 
-      <v-select
-          v-model="state.select"
-          :error-messages="v$.select.$errors.map(e => e.$message)"
-          :items="items"
-          label="Item"
+      <v-text-field
+          v-model="state.city"
+          :error-messages="v$.city.$errors.map(e => e.$message)"
+          label="City"
           required
-          @blur="v$.select.$touch"
-          @change="v$.select.$touch"
-      ></v-select>
+          @blur="v$.city.$touch"
+          @input="v$.city.$touch"
+      ></v-text-field>
+
+      <v-text-field
+          v-model="state.country"
+          :error-messages="v$.country.$errors.map(e => e.$message)"
+          label="Country"
+          required
+          @blur="v$.country.$touch"
+          @input="v$.country.$touch"
+      ></v-text-field>
+
+      <v-text-field
+          v-model="state.fullAddress"
+          :error-messages="v$.fullAddress.$errors.map(e => e.$message)"
+          label="Full Address"
+          required
+          @blur="v$.fullAddress.$touch"
+          @input="v$.fullAddress.$touch"
+      ></v-text-field>
     </v-card>
 
     <v-checkbox
@@ -99,6 +71,61 @@ function clear() {
     </v-btn>
   </v-form>
 </template>
-<style scoped>
 
+<script setup>
+import { reactive, ref, provide } from 'vue';
+import { useVuelidate } from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
+import Address from "@/components/form/Address.vue";
+
+// Initial form state
+const initialState = {
+  select: null,
+  checkbox: null,
+  streetNumber: '',
+  street: '',
+  city: '',
+  country: '',
+  fullAddress: '',
+};
+
+const state = reactive({
+  ...initialState,
+});
+
+const rules = {
+  select: { required },
+  items: { required },
+  checkbox: { required },
+  streetNumber: { required },
+  street: { required },
+  city: { required },
+  country: { required },
+  fullAddress: { required },
+};
+
+const v$ = useVuelidate(rules, state);
+
+function clear() {
+  v$.value.$reset();
+
+  for (const [key, value] of Object.entries(initialState)) {
+    state[key] = value;
+  }
+}
+
+// Marker state and update function
+const marker = ref([36.8065, 10.181667]);
+function updateMarker(val) {
+  marker.value = val;
+}
+
+// Provide marker and updateMarker for other components
+provide('location', {
+  marker,
+  updateMarker,
+});
+</script>
+
+<style scoped>
 </style>

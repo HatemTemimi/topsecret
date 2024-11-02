@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {VAutocomplete} from 'vuetify/components'
-import {ref, watch} from "vue";
+import {inject, ref, watch} from "vue";
 import {getPlaceDetails, getPlacesGoogle} from "@/api/getPlaces";
 import _ from 'lodash'
 import AddressLocator from "@/components/form/AddressLocator.vue";
@@ -9,7 +9,20 @@ import {provide} from 'vue'
 const model = ref(null)
 const results = ref([])
 const loading = ref(false)
-const marker = ref([36.8065, 10.181667])
+//const marker = ref([36.8065, 10.181667])
+const {marker, updateMarker} = inject('location');
+/*
+function updateMarker(val) {
+  marker.value = val
+}
+
+provide('location', {
+  marker,
+  updateMarker
+})
+  */
+
+
 
 // Debounced search function using watch
 let timeoutId: number | null = null;
@@ -24,14 +37,6 @@ const debouncedSearch = (val: string) => {
 
 watch(model, debouncedSearch, {immediate: true}); // Call search on initial render
 
-function updateMarker(val) {
-  marker.value = val
-}
-
-provide('location', {
-  marker,
-  updateMarker
-})
 
 const validateLocation = async (model) => {
   const details = await getPlaceDetails(model.place_id)
@@ -62,7 +67,7 @@ const validateLocation = async (model) => {
         validate-on="blur"
         @update:modelValue="(model)=>validateLocation(model)"
     ></v-autocomplete>
-    <AddressLocator :marker="marker" :updateMarker="updateMarker"/>
+    <AddressLocator />
   </v-card>
 </template>
 
