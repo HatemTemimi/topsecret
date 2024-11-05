@@ -27,5 +27,6 @@ func (router *Router) Init(e *echo.Echo) {
 	e.GET("/api/places", router.PlacesHandler.GetPlaces)
 	e.GET("/api/address/lookup", router.PlacesHandler.GetAddressFromLatLng)
 	e.POST("/api/rental/add", router.RentalHandler.AddRental)
+	e.GET("/api/rental/list", router.RentalHandler.GetAllRentals)
 
 }

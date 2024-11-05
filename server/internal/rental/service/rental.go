@@ -9,6 +9,7 @@ import (
 
 type RentalService interface {
 	AddRental(ctx context.Context, rental types.Rental) error
+	GetAllRentals(ctx context.Context) ([]types.Rental, error)
 }
 
 type rentalService struct {
@@ -22,4 +23,9 @@ func NewRentalService(repo repository.RentalRepository) RentalService {
 func (s *rentalService) AddRental(ctx context.Context, rental types.Rental) error {
 	// Perform any business logic checks, if needed
 	return s.repo.AddRental(ctx, rental)
+}
+
+// GetAllRentals retrieves all rentals by calling the repository layer
+func (s *rentalService) GetAllRentals(ctx context.Context) ([]types.Rental, error) {
+	return s.repo.GetAllRentals(ctx)
 }

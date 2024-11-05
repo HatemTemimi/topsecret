@@ -8,11 +8,14 @@ import (
 
 	"server/internal/rental/types"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RentalRepository interface {
 	AddRental(ctx context.Context, rental types.Rental) error
+	GetAllRentals(ctx context.Context) ([]types.Rental, error)
 }
 
 type rentalRepository struct {
@@ -35,4 +38,28 @@ func (r *rentalRepository) AddRental(ctx context.Context, rental types.Rental) e
 		return err
 	}
 	return nil
+}
+
+func (r *rentalRepository) GetAllRentals(ctx context.Context) ([]types.Rental, error) {
+	var rentals []types.Rental
+
+	cursor, err := r.collection.Find(ctx, bson.D{}, options.Find())
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var rental types.Rental
+		if err := cursor.Decode(&rental); err != nil {
+			return nil, err
+		}
+		rentals = append(rentals, rental)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return rentals, nil
 }

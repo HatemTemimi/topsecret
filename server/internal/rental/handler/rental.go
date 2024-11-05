@@ -60,3 +60,12 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, map[string]string{"message": "Rental added successfully"})
 }
+
+// GetAllRentals handles the GET request to retrieve all rentals
+func (h *RentalHandler) GetAllRentals(c echo.Context) error {
+	rentals, err := h.service.GetAllRentals(c.Request().Context())
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve rentals"})
+	}
+	return c.JSON(http.StatusOK, rentals)
+}
