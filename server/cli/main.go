@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"server/internal/server"
 
@@ -28,11 +27,15 @@ func main() {
 	}
 	defer mongoDB.Close()
 
-	// Access a collection
-	collection := mongoDB.GetCollection("your_collection")
-	fmt.Println("Connected to MongoDB and accessed collection:", collection.Name())
+	/*
+		// Access a collection
+		collection := mongoDB.GetCollection("your_collection")
+		fmt.Println("Connected to MongoDB and accessed collection:", collection.Name())
+	*/
 
-	client := &server.Server{}
+	client := &server.Server{
+		Db: mongoDB,
+	}
 	client.SetupAndLaunch(echo)
 
 }

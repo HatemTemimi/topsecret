@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"server/internal/places/handler"
 	"server/internal/places/service"
+
 	"syscall"
 	"time"
 
@@ -18,8 +19,30 @@ import (
 
 type Server struct {
 	router *Router
+	Db     *DB
 }
 
+// setups up  routing  handlers via services and repos
+func (s *Server) SetupRouter(e *echo.Echo, apiKey string) {
+
+	// Create the PlacesService
+	placesService := service.NewPlacesService(apiKey)
+
+	// Create the PlacesHandler with the service injected
+	placesHandler := &handler.PlacesHandler{
+		Service: placesService,
+	}
+
+	// Initialize the Router with the PlacesHandler
+	s.router = &Router{
+		PlacesHandler: placesHandler,
+	}
+
+	s.router.Init(e)
+	s.router.Init(e)
+}
+
+// launches the server
 func (s *Server) SetupAndLaunch(e *echo.Echo) {
 
 	// Get the API key from environment variables or configuration
@@ -47,20 +70,7 @@ func (s *Server) SetupAndLaunch(e *echo.Echo) {
 		log.Fatal("PORT is not set")
 	}
 
-	// Create the PlacesService
-	placesService := service.NewPlacesService(apiKey)
-
-	// Create the PlacesHandler with the service injected
-	placesHandler := &handler.PlacesHandler{
-		Service: placesService,
-	}
-
-	// Initialize the Router with the PlacesHandler
-	s.router = &Router{
-		PlacesHandler: placesHandler,
-	}
-
-	s.router.Init(e)
+	s.SetupRouter(e, apiKey)
 
 	go func() {
 		if err := e.Start(fmt.Sprintf(":%s", port)); err != nil && err != http.ErrServerClosed {
