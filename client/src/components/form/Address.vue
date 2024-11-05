@@ -11,18 +11,6 @@ const results = ref([])
 const loading = ref(false)
 //const marker = ref([36.8065, 10.181667])
 const {marker, updateMarker} = inject('location');
-/*
-function updateMarker(val) {
-  marker.value = val
-}
-
-provide('location', {
-  marker,
-  updateMarker
-})
-  */
-
-
 
 // Debounced search function using watch
 let timeoutId: number | null = null;

@@ -82,14 +82,25 @@
 </template>
 
 <script setup>
-import { reactive, ref, provide } from 'vue';
+import { reactive, ref, provide, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Address from "@/components/form/Address.vue";
+import axios from 'axios';
+
+// Marker state and update function
+const marker = ref([36.8065, 10.181667]);
+function updateMarker(val) {
+  marker.value = val;
+}
 
 // Initial form state
 const initialState = {
   checkbox: null,
+  geometry: {
+    lat: marker.value[0],
+    lng: marker.value[1]
+  },
   streetNumber: '',
   street: '',
   city: '',
@@ -103,17 +114,25 @@ const state = reactive({
 });
 
 const rules = {
-  checkbox: { },
+  checkbox: {  },
   streetNumber: {  },
-  street: {  },
-  city: {  },
-  country: {  },
-  fullAddress: {  },
+  street: { required },
+  city: { required },
+  country: { required },
+  fullAddress: { required },
   images: {  },
 };
 
 // Validation instance
 const v$ = useVuelidate(rules, state);
+
+// Watch for changes in `marker` and update `state.geometry`
+watch(marker, (newVal) => {
+  console.log('marker update..')
+  console.log(newVal)
+  state.geometry.lat = newVal[0];
+  state.geometry.lng = newVal[1];
+}, { deep: true });
 
 // Custom rule for image limit
 const fileLimit = (files) => {
@@ -122,8 +141,7 @@ const fileLimit = (files) => {
 
 // Handle image upload and convert FileList to an array
 function handleImageUpload(event) {
-  console.log(event.target.value)
-  const files = Array.from(event.target.value); // Convert FileList to array
+  const files = Array.from(event.target.files); // Convert FileList to array
   state.images = files.slice(0, 3); // Limit to 3 images
 }
 
@@ -136,20 +154,43 @@ function clear() {
   }
 }
 
-// Capture form submission and log values
-function submitForm() {
-  console.log('Form Values:', JSON.stringify(state, null, 2));
-  v$.value.$validate().then((isValid) => {
-    if (isValid) {
-      console.log('Form Values:', JSON.stringify(state, null, 2));
-    }
-  });
-}
+// Capture form submission and send to API
+async function submitForm() {
+  const isValid = await v$.value.$validate();
+  if (!isValid) {
+    console.log("Form is invalid");
+    return;
+  }
 
-// Marker state and update function
-const marker = ref([36.8065, 10.181667]);
-function updateMarker(val) {
-  marker.value = val;
+  // Prepare data for submission
+  const formData = new FormData();
+  formData.append("name", state.name);
+  formData.append("streetNumber", state.streetNumber);
+  formData.append("street", state.street);
+  formData.append("city", state.city);
+  formData.append("country", state.country);
+  formData.append("fullAddress", state.fullAddress);
+  formData.append("agree", state.checkbox);
+  formData.append("lat", state.geometry.lat);
+  formData.append("lng", state.geometry.lng);
+
+  // Add images to formData
+  state.images.forEach((image, index) => {
+    formData.append(`images[${index}]`, image);
+  });
+
+
+  try {
+    const response = await axios.post("http://localhost:3001/api/rental/add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log("Rental added successfully:", response.data);
+    clear(); // Clear the form after successful submission
+  } catch (error) {
+    console.error("Failed to add rental:", error.response ? error.response.data : error.message);
+  }
 }
 
 // Provide marker and updateMarker for other components
