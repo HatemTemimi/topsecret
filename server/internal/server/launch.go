@@ -10,6 +10,10 @@ import (
 	"server/internal/places/handler"
 	"server/internal/places/service"
 
+	rentalHandler "server/internal/rental/handler"
+	rentalRepository "server/internal/rental/repository"
+	rentalService "server/internal/rental/service"
+
 	"syscall"
 	"time"
 
@@ -25,6 +29,10 @@ type Server struct {
 // setups up  routing  handlers via services and repos
 func (s *Server) SetupRouter(e *echo.Echo, apiKey string) {
 
+	rentalRepo := rentalRepository.NewRentalRepository(s.Db.database)
+	rentalService := rentalService.NewRentalService(rentalRepo)
+	rentalHandler := rentalHandler.NewRentalHandler(rentalService)
+
 	// Create the PlacesService
 	placesService := service.NewPlacesService(apiKey)
 
@@ -36,6 +44,7 @@ func (s *Server) SetupRouter(e *echo.Echo, apiKey string) {
 	// Initialize the Router with the PlacesHandler
 	s.router = &Router{
 		PlacesHandler: placesHandler,
+		RentalHandler: rentalHandler,
 	}
 
 	s.router.Init(e)
