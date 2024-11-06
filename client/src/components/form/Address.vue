@@ -56,7 +56,7 @@ const validateLocation = async (model) => {
         validate-on="blur"
         @update:modelValue="(model)=>validateLocation(model)"
     ></v-autocomplete>
-    <AddressLocator  :updateMarker="updateMarker"/>
+    <AddressLocator/>
   </v-card>
 </template>
 

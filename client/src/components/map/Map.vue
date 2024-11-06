@@ -12,7 +12,7 @@
             layer-type="base"
             name="OpenStreetMap"
         ></l-tile-layer>
-        <div v-for="item in latlng">
+        <div v-for="(item, index) in latlng" :key="index">
           <Marker :latlng="item"/>
         </div>
       </l-map>
@@ -23,32 +23,39 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import {LMap, LTileLayer} from '@vue-leaflet/vue-leaflet'
-import {onBeforeMount, ref} from "vue";
+import {onMounted, ref} from "vue";
+import axios from 'axios';
 import Marker from '@/components/map/marker/Marker.vue'
 
+// Define props and refs
 const props = defineProps(['center'])
 const currentCenter = ref([])
-
-onBeforeMount(() => {
-  console.log(props.center);
-  if (props.center.lat && props.center.lng) {
-    currentCenter.value.push(props.center.lat, props.center.lng)
-  } else {
-    currentCenter.value = [36.8065, 10.181667]
-  }
-})
-
-const latlng = ref([
-  [36.8065, 10.181667],
-  [36.8065, 10.172667],
-  [36.7065, 10.162667],
-  [36.7045, 10.162667],
-  [36.8045, 10.162667],
-  [36.8075, 10.171663],
-])
-
+const latlng = ref([]) // Holds coordinates for markers
 const zoom = ref(12)
 
+// Set initial center of the map
+if (props.center?.lat && props.center?.lng) {
+  currentCenter.value = [props.center.lat, props.center.lng]
+} else {
+  currentCenter.value = [36.8065, 10.181667] // Default center
+}
+
+// Fetch rentals data on component mount
+onMounted(async () => {
+  try {
+    // Fetch rentals from the API
+    const response = await axios.get('http://localhost:3001/api/rental/list') // Update with your actual API endpoint
+    const rentals = response.data
+
+    console.log(rentals)
+
+    // Extract lat and lng from each rental and add to latlng array
+    latlng.value = rentals.map(rental => [rental.lat, rental.lng])
+
+  } catch (error) {
+    console.error("Failed to fetch rentals:", error)
+  }
+})
 </script>
 
 <style></style>

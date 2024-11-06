@@ -56,7 +56,8 @@ function debounce(func, delay) {
 
 // Wrap getAddressFromLatLng with debounce
 const debouncedGetAddressFromLatLng = debounce(async (lat, lng) => {
-  updateMarker([lat, lng])
+
+  console.log(lat,lng)
   try {
     const response = await getAddressFromLatLng(lat, lng);
     // Parse the address components and map to the fields
@@ -79,6 +80,8 @@ const debouncedGetAddressFromLatLng = debounce(async (lat, lng) => {
 
     // Set full address if it's available in response
     addressData.fullAddress = response.formatted_address
+
+    updateMarker([lat, lng])
 
     // Call updateInfo to update the main component state
     updateInfo(addressData);

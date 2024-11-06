@@ -11,4 +11,5 @@ type Rental struct {
 	Lng          string   `json:"lng" bson:"lng"`
 	Images       []string `json:"images" bson:"images"` // URLs or file paths for uploaded images
 	Agree        bool     `json:"agree" bson:"agree"`
+	Status       bool
 }

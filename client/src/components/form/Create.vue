@@ -128,10 +128,8 @@ const v$ = useVuelidate(rules, state);
 
 // Watch for changes in `marker` and update `state.geometry`
 watch(marker, (newVal) => {
-  console.log('marker update..')
-  console.log(newVal)
-  state.geometry.lat = newVal[0];
-  state.geometry.lng = newVal[1];
+  state.geometry.lng = newVal[0];
+  state.geometry.lat = newVal[1];
 }, { deep: true });
 
 // Custom rule for image limit
