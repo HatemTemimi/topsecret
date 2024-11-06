@@ -3,32 +3,26 @@ package server
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
+
+	"server/config"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Config represents the MongoDB configuration.
-type Config struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	Database string
-}
-
 // DB holds the MongoDB client and config.
 type DB struct {
 	client   *mongo.Client
 	database *mongo.Database
-	config   Config
+	config   config.Config
 }
 
 // NewDB initializes a new MongoDB connection.
-func NewDB(config Config) (*DB, error) {
+func NewDB(cfg *config.Config) (*DB, error) {
 	// Build MongoDB URI
-	uri := fmt.Sprintf("mongodb://%s:%s@%s:%d", config.Username, config.Password, config.Host, config.Port)
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:%d", cfg.DatabaseUser, cfg.DatabasePassword, cfg.DatabaseHost, cfg.DatabasePort)
 	clientOptions := options.Client().ApplyURI(uri)
 
 	// Set up a timeout context for connecting to MongoDB
@@ -46,13 +40,13 @@ func NewDB(config Config) (*DB, error) {
 		return nil, fmt.Errorf("failed to ping MongoDB: %v", err)
 	}
 
-	fmt.Println("pinged database:", config.Database)
+	log.Printf("Successfully connected and pinged database: %s", cfg.DatabaseName)
 
 	// Return a DB instance with a connected client and the specified database
 	return &DB{
 		client:   client,
-		database: client.Database(config.Database),
-		config:   config,
+		database: client.Database(cfg.DatabaseName),
+		config:   *cfg,
 	}, nil
 }
 

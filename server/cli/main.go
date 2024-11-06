@@ -2,40 +2,23 @@ package main
 
 import (
 	"log"
+	"server/config"
 	"server/internal/server"
 
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
+	// Initialize Echo framework
+	e := echo.New()
 
-	echo := echo.New()
-
-	// MongoDB configuration
-	config := server.Config{
-		Host:     "localhost",
-		Port:     27018,
-		Username: "user",
-		Password: "pass",
-		Database: "database",
-	}
-
-	// Initialize DB connection
-	mongoDB, err := server.NewDB(config)
+	// Load configuration from the environment or .env file
+	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Error connecting to the database: %v", err)
+		log.Fatalf("Failed to load config: %v", err)
 	}
-	defer mongoDB.Close()
 
-	/*
-		// Access a collection
-		collection := mongoDB.GetCollection("your_collection")
-		fmt.Println("Connected to MongoDB and accessed collection:", collection.Name())
-	*/
-
-	client := &server.Server{
-		Db: mongoDB,
-	}
-	client.SetupAndLaunch(echo)
-
+	// Initialize and set up the server
+	client := &server.Server{}
+	client.SetupAndLaunch(e, cfg)
 }
