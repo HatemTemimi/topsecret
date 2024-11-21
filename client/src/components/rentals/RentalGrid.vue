@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
-import CardTify from "@/components/offer/OfferCard.vue";
+import CardTify from "@/components/rentals/RentalCard.vue";
 
 const cards = ref(
     [

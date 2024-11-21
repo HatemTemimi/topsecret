@@ -85,7 +85,7 @@
 import { reactive, ref, provide, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-import Address from "@/components/form/Address.vue";
+import Address from "@/components/rentals/form/Address.vue";
 import axios from 'axios';
 
 // Marker state and update function

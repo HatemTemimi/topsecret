@@ -3,7 +3,7 @@ import {VAutocomplete} from 'vuetify/components'
 import {inject, ref, watch} from "vue";
 import {getPlaceDetails, getPlacesGoogle} from "@/api/getPlaces";
 import _ from 'lodash'
-import AddressLocator from "@/components/form/AddressLocator.vue";
+import AddressLocator from "@/components/rentals/form/AddressLocator.vue";
 import {provide} from 'vue'
 
 const model = ref(null)

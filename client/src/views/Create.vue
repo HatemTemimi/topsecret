@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RentalForm from "@/components/form/RentalForm.vue";
+import RentalForm from "@/components/rentals/form/RentalForm.vue";
 </script>
 
 <template>

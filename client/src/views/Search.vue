@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Geosearch from "@/components/map/Geosearch.vue";
+import Geosearch from "@/components/rentals/map/Geosearch.vue";
 </script>
 
 <template>

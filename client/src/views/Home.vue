@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Map from "@/components/map/Map.vue";
+import Map from "@/components/rentals/map/Map.vue";
 import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
-import LocationsGrid from "@/components/offer/OffersGrid.vue";
+import LocationsGrid from "@/components/rentals/RentalGrid.vue";
 
 const router = useRouter();
 const route = useRoute();

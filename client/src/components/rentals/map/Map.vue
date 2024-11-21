@@ -25,7 +25,7 @@ import "leaflet/dist/leaflet.css";
 import {LMap, LTileLayer} from '@vue-leaflet/vue-leaflet'
 import {onMounted, ref} from "vue";
 import axios from 'axios';
-import Marker from '@/components/map/marker/Marker.vue'
+import Marker from '@/components/rentals/map/marker/Marker.vue'
 
 // Define props and refs
 const props = defineProps(['center'])
