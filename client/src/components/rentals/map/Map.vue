@@ -46,6 +46,7 @@ onMounted(async () => {
     // Fetch rentals from the API
     const response = await axios.get('http://localhost:3001/api/rental/list') // Update with your actual API endpoint
     const data = response.data
+    console.log(data)
 
     // Extract lat and lng from each rental and add to latlng array
     rentals.value = data

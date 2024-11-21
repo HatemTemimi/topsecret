@@ -73,6 +73,7 @@ func (s *Server) SetupAndLaunch(e *echo.Echo, cfg *config.Config) {
 	defer mongoDB.Close()
 
 	s.Db = mongoDB
+	s.Db.InitMockRentals()
 
 	// Initialize router with configuration
 	s.SetupRouter(e, cfg)
