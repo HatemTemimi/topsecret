@@ -5,7 +5,6 @@
         <PopupContent :rental="props.rental"/>
       </l-popup :rental="props.rental">
     </l-marker>
-
   </div>
 </template>
 
