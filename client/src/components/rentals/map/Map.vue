@@ -12,7 +12,7 @@
             layer-type="base"
             name="OpenStreetMap"
         ></l-tile-layer>
-        <div v-for="(item, index) in rentals" :key="index">
+        <div v-for="(item, index) in props.rentals" :key="index">
           <Marker :rental="item"/>
         </div>
       </l-map>
@@ -28,7 +28,7 @@ import axios from 'axios';
 import Marker from '@/components/rentals/map/marker/Marker.vue'
 
 // Define props and refs
-const props = defineProps(['center'])
+const props = defineProps(['center', 'rentals'])
 const currentCenter = ref([])
 const rentals = ref([]) // Holds coordinates for markers
 const zoom = ref(12)
@@ -41,19 +41,8 @@ if (props.center?.lat && props.center?.lng) {
 }
 
 // Fetch rentals data on component mount
-onMounted(async () => {
-  try {
-    // Fetch rentals from the API
-    const response = await axios.get('http://localhost:3001/api/rental/list') // Update with your actual API endpoint
-    const data = response.data
-    console.log(data)
-
-    // Extract lat and lng from each rental and add to latlng array
-    rentals.value = data
-
-  } catch (error) {
-    console.error("Failed to fetch rentals:", error)
-  }
+onMounted(() => {
+  rentals.value = props.rentals
 })
 </script>
 
