@@ -4,26 +4,29 @@ const props = defineProps<{ rental: { name: string; fullAddress: string } }>()
 </script>
 
 <template>
-  <v-container fluid min-width="13vw">
-        <v-card theme="light" :title="props.rental.name">
-          <v-card-item>
-    <p>{{ props.rental.fullAddress }}</p>
-    <v-chip
-      class="ma-2"
-      color="pink"
-      label
-    >
-      <v-icon icon="mdi-label" start></v-icon>
-      some tag
-    </v-chip>
-</v-card-item>
-<v-card-actions>
-  <v-btn size="small" variant="outlined">
-    View Rental
-    <v-icon>mdi-arrow-right</v-icon>
-  </v-btn>
-</v-card-actions>
-
+  <v-container fluid min-width="14vw">
+    <v-card theme="light" :title="props.rental.name">
+      <v-card-item>
+        <p>{{ props.rental.fullAddress }}</p>
+        <v-chip
+          class="ma-2"
+          color="pink"
+          label
+        >
+          <v-icon icon="mdi-label" start></v-icon>
+          some tag
+        </v-chip>
+      </v-card-item>
+      <v-card-actions>
+        <v-btn size="small" variant="outlined">
+          Edit
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+        <v-btn size="small" variant="outlined">
+          View
+          <v-icon>mdi-arrow-right</v-icon>
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-container>
 </template>
