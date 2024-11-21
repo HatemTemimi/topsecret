@@ -6,7 +6,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 <template>
   <v-layout class="rounded-md p-2">
     <Navbar/>
-    <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
+    <v-main class="d-flex align-center justify-center">
       <RouterView/>
     </v-main>
   </v-layout>

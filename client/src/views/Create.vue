@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import Create from "@/components/form/Create.vue";
-
+import RentalForm from "@/components/form/RentalForm.vue";
 </script>
 
 <template>
   <v-container fluid width="50vw">
-    <Create/>
+    <RentalForm/>
   </v-container>
 </template>
 

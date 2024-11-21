@@ -5,7 +5,9 @@ import {VBtn} from "vuetify/components";
 
 <template>
   <v-app-bar rounded>
-    <v-app-bar-title>App Title</v-app-bar-title>
+    <v-app-bar-title>
+      Darmap
+    </v-app-bar-title>
 
     <v-spacer></v-spacer>
 
