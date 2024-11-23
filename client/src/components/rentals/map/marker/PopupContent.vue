@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-const props = defineProps<{ rental: { name: string; fullAddress: string } }>()
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const props = defineProps<{ rental: { id: string; name: string; fullAddress: string } }>();
+
+const navigateToRental = () => {
+  router.push(`/details/${props.rental.id}`);
+};
 </script>
 
 <template>
-  <v-container fluid min-width="14vw">
     <v-card theme="light" :title="props.rental.name">
       <v-card-item>
         <p>{{ props.rental.fullAddress }}</p>
@@ -22,13 +29,12 @@ const props = defineProps<{ rental: { name: string; fullAddress: string } }>()
           Edit
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn size="small" variant="outlined">
-          View
-          <v-icon>mdi-arrow-right</v-icon>
-        </v-btn>
+        <v-btn size="small" variant="outlined" @click="navigateToRental">
+        View
+        <v-icon>mdi-arrow-right</v-icon>
+      </v-btn>
       </v-card-actions>
     </v-card>
-  </v-container>
 </template>
 
 <style scoped>
