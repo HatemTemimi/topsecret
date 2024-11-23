@@ -12,9 +12,9 @@ try {
 
 export async function getRentalById(id:string){
 try {
-    const response = await axios.get(`http://localhost:3001/api/rental/:${id}`) // Update with your actual API endpoint
+    const response = await axios.get(`http://localhost:3001/api/rental/${id}`) // Update with your actual API endpoint
     return response.data
   } catch (error) {
-    console.error("Failed to fetch rentals with id:",id, error)
+    console.error("Failed to fetch rental with id:",id, error)
   }
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"server/internal/rental/service"
@@ -68,6 +69,7 @@ func (h *RentalHandler) GetAllRentals(c echo.Context) error {
 
 // GetRentalByID handles the GET request to retrieve a single rental by ID
 func (h *RentalHandler) GetRentalByID(c echo.Context) error {
+	fmt.Println("correct handler")
 	id := c.Param("id")
 	if id == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Rental ID is required"})
