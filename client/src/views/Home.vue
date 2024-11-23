@@ -5,6 +5,7 @@ import {onMounted, ref} from "vue";
 import LocationsGrid from "@/components/rentals/RentalGrid.vue";
 import axios from "axios";
 import { getRentals } from "@/api/rentals";
+import Filters from "@/components/rentals/Filters.vue"
 
 const router = useRouter();
 const route = useRoute();
@@ -29,7 +30,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-row gap-4 w-full max-h-[91vh] overflow-y-hidden">
+  <div class="flex flex-row gap-4 w-full max-h-[90vh] overflow-y-hidden">
     <Map :rentals="rentals" :center="route.query"/>
     <LocationsGrid :rentals="rentals"/>
   </div>

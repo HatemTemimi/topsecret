@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="h-full w-[65vw]">
-
+      <Filters></Filters>
       <l-map
           :use-global-leaflet="false"
           ref="map"
@@ -26,6 +26,8 @@ import "leaflet/dist/leaflet.css";
 import {LMap, LTileLayer} from '@vue-leaflet/vue-leaflet'
 import { ref } from "vue";
 import Marker from '@/components/rentals/map/marker/Marker.vue'
+
+import Filters from '@/components/rentals/Filters.vue'
 
 // Define props and refs
 const props = defineProps(['center', 'rentals'])
