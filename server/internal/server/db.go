@@ -160,6 +160,11 @@ func (db *DB) InitMockRentals() error {
 		},
 	}
 
+	//set mockup Image
+	for i := range rentals {
+		rentals[i].Images = []string{"https://cdn.vuetifyjs.com/images/cards/hotel.jpg"}
+	}
+
 	collection := db.GetCollection("rentals")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
