@@ -4,6 +4,7 @@ import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import LocationsGrid from "@/components/rentals/RentalGrid.vue";
 import axios from "axios";
+import { getRentals } from "@/api/rentals";
 
 const router = useRouter();
 const route = useRoute();
@@ -13,8 +14,7 @@ const rentals = ref([])
 onMounted(async () => {
     try {
     // Fetch rentals from the API
-    const response = await axios.get('http://localhost:3001/api/rental/list') // Update with your actual API endpoint
-    const data = response.data
+    const data = await getRentals()
     // Extract lat and lng from each rental and add to latlng array
     rentals.value = data
     console.log(rentals.value)

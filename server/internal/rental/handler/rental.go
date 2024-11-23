@@ -1,4 +1,3 @@
-// handler/rental_handler.go
 package handler
 
 import (
@@ -29,8 +28,8 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 	rental.City = c.FormValue("city")
 	rental.Country = c.FormValue("country")
 	rental.FullAddress = c.FormValue("fullAddress")
-	rental.Lat = c.FormValue("lng")
-	rental.Lng = c.FormValue("lat")
+	rental.Lat = c.FormValue("lat")
+	rental.Lng = c.FormValue("lng")
 
 	// Parse boolean for "agree" field
 	agree := c.FormValue("agree")
@@ -38,16 +37,13 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 
 	// Parse images if any are uploaded
 	form, err := c.MultipartForm()
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid form data"})
-	}
-
-	// Collect image files (assuming filenames or other identifiers are sufficient)
-	rental.Images = []string{}
-	files := form.File["images"]
-	for _, file := range files {
-		// Here, we just add the filename for demonstration; in practice, you'd save the file
-		rental.Images = append(rental.Images, file.Filename)
+	if err == nil && form != nil {
+		rental.Images = []string{}
+		files := form.File["images"]
+		for _, file := range files {
+			// Here, we just add the filename for demonstration; in practice, you'd save the file
+			rental.Images = append(rental.Images, file.Filename)
+		}
 	}
 
 	// Log rental data for debugging
@@ -68,4 +64,54 @@ func (h *RentalHandler) GetAllRentals(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve rentals"})
 	}
 	return c.JSON(http.StatusOK, rentals)
+}
+
+// GetRentalByID handles the GET request to retrieve a single rental by ID
+func (h *RentalHandler) GetRentalByID(c echo.Context) error {
+	id := c.Param("id")
+	if id == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Rental ID is required"})
+	}
+
+	rental, err := h.service.GetRentalByID(c.Request().Context(), id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve rental"})
+	}
+	if rental == nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Rental not found"})
+	}
+	return c.JSON(http.StatusOK, rental)
+}
+
+// UpdateRental handles the PUT request to update a rental
+func (h *RentalHandler) UpdateRental(c echo.Context) error {
+	id := c.Param("id")
+	if id == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Rental ID is required"})
+	}
+
+	var updatedData types.Rental
+	if err := c.Bind(&updatedData); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input data"})
+	}
+
+	if err := h.service.UpdateRental(c.Request().Context(), id, updatedData); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to update rental"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Rental updated successfully"})
+}
+
+// DeleteRental handles the DELETE request to remove a rental
+func (h *RentalHandler) DeleteRental(c echo.Context) error {
+	id := c.Param("id")
+	if id == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Rental ID is required"})
+	}
+
+	if err := h.service.DeleteRental(c.Request().Context(), id); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to delete rental"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Rental deleted successfully"})
 }
