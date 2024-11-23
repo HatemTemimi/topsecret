@@ -1,6 +1,12 @@
 package types
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"server/internal/user/types"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Rental struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
@@ -15,4 +21,15 @@ type Rental struct {
 	Images       []string           `json:"images" bson:"images"` // URLs or file paths for uploaded images
 	Agree        bool               `json:"agree" bson:"agree"`
 	Status       bool               `json:"status" bson:"status"`
+	Description  string             `json:"description" bson:"description"`
+	Price        int64              `json:"price" bson:"price"`
+	Bedrooms     int64              `json:"bedrooms" bson:"bedrooms"`
+	Bathrooms    int64              `json:"bathrooms" bson:"bathrooms"`
+	AreaSize     int64              `json:"areaSize" bson:"areaSize"`
+	Available    bool               `json:"available" bson:"available"`
+	Tags         []string           `json:"tags" bson:"tags"`
+	CreatedAt    time.Time          `json:"createdAt" bson:"createdAt"`
+	UpdatedAt    time.Time          `json:"updatedAt" bson:"updatedAt"`
+	CreatedBy    types.User         `json:"createdBy" bson:"createdBy"`
+	UpdatedBy    types.User         `json:"updatedBy" bson:"updatedBy"`
 }

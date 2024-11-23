@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
 import CardTify from "@/components/rentals/RentalCard.vue";
 
 // Define props to accept rentals
@@ -26,7 +25,7 @@ const props = defineProps<{
         >
           <CardTify
             :title="rental.name"
-            :src="rental.images[0] || 'https://cdn.vuetifyjs.com/images/cards/hotel.jpg'"
+            :src="rental.images[0]"
             :address="rental.fullAddress"
           />
         </v-col>

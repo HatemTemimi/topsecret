@@ -15,6 +15,10 @@ import (
 	rentalRepository "server/internal/rental/repository"
 	rentalService "server/internal/rental/service"
 
+	userHandler "server/internal/user/handler"
+	userRepository "server/internal/user/repository"
+	userService "server/internal/user/service"
+
 	"syscall"
 	"time"
 
@@ -33,6 +37,10 @@ func (s *Server) SetupRouter(e *echo.Echo, cfg *config.Config) {
 	rentalService := rentalService.NewRentalService(rentalRepo)
 	rentalHandler := rentalHandler.NewRentalHandler(rentalService)
 
+	userRepository := userRepository.NewUserRepository(s.Db.database)
+	userService := userService.NewUserService(userRepository)
+	userHandler := userHandler.NewUserHandler(userService)
+
 	// Create the PlacesService using the API key from config
 	placesService := service.NewPlacesService(cfg.GooglePlacesAPIKey)
 
@@ -45,6 +53,7 @@ func (s *Server) SetupRouter(e *echo.Echo, cfg *config.Config) {
 	s.router = &Router{
 		PlacesHandler: placesHandler,
 		RentalHandler: rentalHandler,
+		UserHandler:   userHandler,
 	}
 
 	// Initialize routes
