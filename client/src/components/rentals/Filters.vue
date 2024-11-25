@@ -1,29 +1,12 @@
 <template>
-  <v-container fluid class="py-4" max-height="10vh">
+  <v-container fluid class="py-4" style="max-height: 10vh;">
     <div class="flex flex-row justify-between items-center">
- 
-
       <!-- Filters Block -->
       <div name="filters" class="flex flex-row gap-4 items-center">
-
-        <div class="min-w-[300px]">
-
-          <LocationAutocomplete/>
-        
+        <!-- Location Autocomplete -->
+        <div class="min-w-[250px]">
+          <LocationAutocomplete />
         </div>
-        <!--
-        <div class="min-w-[200px]">
-          <v-slider
-            v-model="filters.priceRange"
-            :max="priceMax"
-            :min="priceMin"
-            :step="100"
-            range
-            label="Price Range"
-            thumb-label="always"
-          ></v-slider>
-        </div>
--->
 
         <!-- Bedrooms -->
         <div class="min-w-[150px]">
@@ -34,6 +17,7 @@
             outlined
             dense
             clearable
+            @change="updateFiltersState"
           ></v-select>
         </div>
 
@@ -46,6 +30,7 @@
             outlined
             dense
             clearable
+            @change="updateFiltersState"
           ></v-select>
         </div>
 
@@ -58,11 +43,13 @@
             outlined
             dense
             clearable
+            @change="updateFiltersState"
           ></v-select>
         </div>
       </div>
-     <!-- Filter & Reset Buttons -->
-      <div name="buttons" class="flex flex-row gap-2">
+
+      <!-- Filter & Reset Buttons -->
+      <div name="buttons" class="flex flex-row gap-2 ml-4">
         <v-btn size="small" color="primary" @click="applyFilters">Apply Filters</v-btn>
         <v-btn size="small" outlined color="secondary" @click="resetFilters">Reset</v-btn>
       </div>
@@ -71,21 +58,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { inject } from "vue";
 import LocationAutocomplete from "./map/LocationAutocomplete.vue";
 
-// Reactive state for filters
-const filters = ref({
-  priceRange: [0, 5000], // Default price range
-  bedrooms: null,
-  bathrooms: null,
-  available: null,
-});
+// Inject shared state and update method from the parent
+const filters = inject("filters");
+const updateFilters = inject("updateFilters");
 
 // Options for filter dropdowns
-const priceMin = 0;
-const priceMax = 10000;
-
 const bedroomOptions = [1, 2, 3, 4, 5];
 const bathroomOptions = [1, 2, 3, 4];
 const availabilityOptions = [
@@ -93,23 +73,23 @@ const availabilityOptions = [
   { text: "Unavailable", value: false },
 ];
 
-// Emit filter event to parent
+// Update filters state
+const updateFiltersState = () => {
+  updateFilters(filters);
+};
+
+// Apply filters explicitly
 const applyFilters = () => {
-  // Emit the updated filters to the parent component
-  emit("filter", { ...filters.value });
+  updateFilters(filters);
 };
 
 // Reset filters to defaults
 const resetFilters = () => {
-  filters.value = {
-    priceRange: [priceMin, priceMax],
+  updateFilters({
     bedrooms: null,
     bathrooms: null,
     available: null,
-  };
-
-  // Emit reset event to the parent component
-  emit("filter", { ...filters.value });
+  });
 };
 </script>
 
