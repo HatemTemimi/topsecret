@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <div class="h-full w-[65vw]">
+    <div class="map-container">
       <Filters></Filters>
       <l-map
           :use-global-leaflet="false"
@@ -18,7 +17,6 @@
         </div>
       </l-map>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -33,6 +31,7 @@ import Filters from '@/components/rentals/Filters.vue'
 const props = defineProps(['center', 'rentals'])
 const currentCenter = ref([])
 const zoom = ref(12)
+const rentals = ref([])
 
 // Set initial center of the map
 if (props.center?.lat && props.center?.lng) {
@@ -41,6 +40,12 @@ if (props.center?.lat && props.center?.lng) {
   currentCenter.value = [36.8065, 10.181667] // Default center
 }
 
+
 </script>
 
-<style></style>
+<style>
+.map-container {
+  height: 100%;
+  width: 60vw;
+}
+</style>

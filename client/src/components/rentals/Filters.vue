@@ -5,7 +5,13 @@
 
       <!-- Filters Block -->
       <div name="filters" class="flex flex-row gap-4 items-center">
-        <!-- Price Range Slider -->
+
+        <div class="min-w-[300px]">
+
+          <LocationAutocomplete/>
+        
+        </div>
+        <!--
         <div class="min-w-[200px]">
           <v-slider
             v-model="filters.priceRange"
@@ -17,6 +23,7 @@
             thumb-label="always"
           ></v-slider>
         </div>
+-->
 
         <!-- Bedrooms -->
         <div class="min-w-[150px]">
@@ -56,8 +63,8 @@
       </div>
      <!-- Filter & Reset Buttons -->
       <div name="buttons" class="flex flex-row gap-2">
-        <v-btn color="primary" @click="applyFilters">Apply Filters</v-btn>
-        <v-btn outlined color="secondary" @click="resetFilters">Reset</v-btn>
+        <v-btn size="small" color="primary" @click="applyFilters">Apply Filters</v-btn>
+        <v-btn size="small" outlined color="secondary" @click="resetFilters">Reset</v-btn>
       </div>
     </div>
   </v-container>
@@ -65,6 +72,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import LocationAutocomplete from "./map/LocationAutocomplete.vue";
 
 // Reactive state for filters
 const filters = ref({

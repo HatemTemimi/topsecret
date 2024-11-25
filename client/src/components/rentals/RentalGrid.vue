@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import CardTify from "@/components/rentals/RentalCard.vue";
+import type { Rental } from "@/models/rental";
 
 // Define props to accept rentals
 const props = defineProps<{
-  rentals: Array<{
-    name: string;
-    fullAddress: string;
-    images: string[];
-  }>;
+  rentals: Array<Rental>;
 }>();
 </script>
 
