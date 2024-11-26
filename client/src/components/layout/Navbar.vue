@@ -1,16 +1,14 @@
 <script setup lang="ts">
+import { useAuthStore } from "@/stores/authStore"; // Import the authStore
 import { VBtn, VIcon } from "vuetify/components";
-import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-// State for authentication
-const isAuthenticated = ref(!!localStorage.getItem("token")); // Check if token exists in sessionStorage
+const authStore = useAuthStore(); // Access Pinia authStore
 const router = useRouter();
 
 // Logout function
 const logout = () => {
-  localStorage.removeItem("token"); // Clear the token
-  isAuthenticated.value = false; // Update authentication state
+  authStore.logout(); // Clear auth state
   router.push("/user/login"); // Redirect to login page
 };
 </script>
@@ -23,17 +21,19 @@ const logout = () => {
 
     <v-spacer></v-spacer>
 
+    <!-- Navbar for Authenticated Users -->
+    <template v-if="authStore.isAuthenticated">
+      <!-- Greeting -->
+      <span>Hello, {{ authStore.user?.firstName }}</span>
 
-    <!-- Links available only when authenticated -->
-    <template v-if="isAuthenticated">
-    <!-- Links available to all users -->
-    <router-link to="/rentals/search">
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-    </router-link>
+      <!-- Links available to authenticated users -->
+      <router-link to="/rentals/search">
+        <v-btn icon>
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+      </router-link>
 
-      <router-link to="rentals/create">
+      <router-link to="/rentals/create">
         <v-btn icon>
           <v-icon>mdi-plus</v-icon>
         </v-btn>
@@ -51,7 +51,7 @@ const logout = () => {
       </v-btn>
     </template>
 
-    <!-- Login and Register links for unauthenticated users -->
+    <!-- Navbar for Unauthenticated Users -->
     <template v-else>
       <router-link to="/user/login">
         <v-btn icon>

@@ -27,6 +27,7 @@
     "axios": "^1.7.5",
     "dotenv": "^16.4.5",
     "leaflet-geosearch": "^4.0.0",
+    "pinia": "^2.2.6",
     "preline": "^2.4.1",
     "radix-vue": "^1.9.4",
     "vue": "^3.4.29",

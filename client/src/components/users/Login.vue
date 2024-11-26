@@ -3,7 +3,11 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
-import axios from 'axios'
+import { useAuthStore } from "@/stores/authStore";
+import axios from "axios";
+
+// Pinia store
+const authStore = useAuthStore();
 
 // Reactive state for the form
 const state = reactive({
@@ -47,10 +51,10 @@ const submitForm = async () => {
   try {
     // Send login request to the backend
     const response = await axios.post("http://localhost:3001/users/authenticate", state);
-    const token = response.data.token;
+    const { token, user } = response.data;
 
-    // Save the token to localStorage
-    localStorage.setItem("token", token);
+    // Update authStore with token and user data
+    authStore.login(token, user);
 
     // Show success toast
     toast.message = "Login successful! Redirecting...";
@@ -74,6 +78,7 @@ const clearForm = () => {
   error.value = null;
 };
 </script>
+
 
 <template>
   <v-container class="py-5">

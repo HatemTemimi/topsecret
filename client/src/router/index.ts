@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../views/Home.vue';
+import { useAuthStore } from '@/stores/authStore'; // Import the auth store
+import Home from '@/views/Home.vue';
 import Search from "@/views/Search.vue";
 import Create from "@/views/Create.vue";
 import Details from "@/views/Details.vue";
@@ -29,7 +30,7 @@ const routes = [
         path: '/rentals/details/:id',
         name: 'details',
         component: Details,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true },
     },
     {
         path: '/user/register',
@@ -51,10 +52,10 @@ const router = createRouter({
 
 // Middleware to check for authentication
 router.beforeEach((to, from, next) => {
-    const token = localStorage.getItem('token');
+    const authStore = useAuthStore();
 
-    if (to.meta.requiresAuth && !token) {
-        // Redirect to login if the route requires authentication and no token is found
+    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+        // Redirect to login if the route requires authentication and user is not authenticated
         next({ name: 'login' });
     } else {
         // Proceed to the requested route
