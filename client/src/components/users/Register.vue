@@ -57,11 +57,13 @@
           <v-text-field
             v-model="state.confirmPassword"
             :error-messages="v$.confirmPassword.$errors.map((e) => e.$message)"
+            :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show2 ? 'text' : 'password'"
+             @click:append="show2 = !show2"
             label="Confirm Password"
             required
             outlined
             dense
-            type="password"
             @blur="v$.confirmPassword.$touch"
           ></v-text-field>
 
@@ -104,11 +106,16 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email, minLength, sameAs } from "@vuelidate/validators";
 import axios from "axios";
+
+// Custom function to validate that passwords match
+const passwordsMatch = (value: string, state: any) => {
+  return value === state.password || "Passwords do not match.";
+};
 
 // Router
 const router = useRouter();
@@ -127,6 +134,8 @@ const state = reactive({
 
 // Show/Hide Password
 const show1 = ref(false);
+// Show/Hide Password
+const show2 = ref(false);
 
 // Validation rules
 const rules = {
@@ -136,7 +145,7 @@ const rules = {
   password: { required, minLength: minLength(6) },
   confirmPassword: {
     required,
-    sameAsPassword: sameAs(() => state.password),
+    sameAsPassword: sameAs(computed(()=> state.password)),
   },
   phone: { required },
   address: { required },
@@ -178,7 +187,7 @@ const submitForm = async () => {
 
     // Redirect to login page after 2 seconds
     setTimeout(() => {
-      router.push("/login");
+      router.push("/user/login");
     }, 2000);
   } catch (err: any) {
     error.value = err.response?.data?.error || "Registration failed.";

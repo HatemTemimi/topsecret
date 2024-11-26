@@ -1,45 +1,65 @@
-import {createRouter, createWebHistory} from 'vue-router'
-import Home from '../views/Home.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/Home.vue';
 import Search from "@/views/Search.vue";
 import Create from "@/views/Create.vue";
 import Details from "@/views/Details.vue";
 import Register from "@/views/Register.vue";
-import Login from '@/views/Login.vue'
+import Login from '@/views/Login.vue';
 
+// Define routes
+const routes = [
+    {
+        path: '/rentals',
+        name: 'home',
+        component: Home,
+        meta: { requiresAuth: true }, // Protect this route
+    },
+    {
+        path: '/rentals/search',
+        name: 'search',
+        component: Search,
+    },
+    {
+        path: '/rentals/create',
+        name: 'create',
+        component: Create,
+        meta: { requiresAuth: true }, // Protect this route
+    },
+    {
+        path: '/rentals/details/:id',
+        name: 'details',
+        component: Details,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/user/register',
+        name: 'register',
+        component: Register,
+    },
+    {
+        path: '/user/login',
+        name: 'login',
+        component: Login,
+    },
+];
+
+// Create router
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
-    routes: [
-        {
-            path: '/home',
-            name: 'home',
-            component: Home
-        },
-        {
-            path: '/',
-            name: 'search',
-            component: Search
-        },
-        {
-            path: '/create',
-            name: 'create',
-            component: Create
-        },
-        {
-            path: '/details/:id',
-            name: 'details',
-            component: Details
-        },
-        {
-            path: '/user/register',
-            name: 'register',
-            component: Register
-        },
-        {
-            path: '/user/login',
-            name: 'login',
-            component: Login
-        },
-    ]
-})
+    routes,
+});
 
-export default router
+// Middleware to check for authentication
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+
+    if (to.meta.requiresAuth && !token) {
+        // Redirect to login if the route requires authentication and no token is found
+        next({ name: 'login' });
+    } else {
+        // Proceed to the requested route
+        next();
+    }
+});
+
+export default router;

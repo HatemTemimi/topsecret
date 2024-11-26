@@ -59,7 +59,7 @@ const submitForm = async () => {
 
     // Redirect to the dashboard or home page after 2 seconds
     setTimeout(() => {
-      router.push("/home");
+      router.push("/rentals");
     }, 2000);
   } catch (err: any) {
     error.value = err.response?.data?.error || "Login failed. Please try again.";
