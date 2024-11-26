@@ -8,6 +8,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
 import { createPinia } from "pinia";
+import { useAuthStore } from './stores/authStore'
 
 
 
@@ -21,9 +22,13 @@ const vuetify = createVuetify({
 
 const pinia = createPinia();
 
-createApp(App)
-    .use(vuetify)
-    .use(router)
-    .use(pinia)
-    .mount('#app')
+const app = createApp(App)
+app.use(vuetify)
+app.use(router)
+app.use(pinia)
+
+const authStore = useAuthStore();
+authStore.loadSession();
+
+app.mount('#app')
 

@@ -102,11 +102,11 @@
 
       <v-select
         v-model="state.available"
-        :items="[
-          { state: 'Florida', abbr: 'FL' },
-          { state: 'Georgia', abbr: 'GA' }]"
+        :items="availabilityOptions"
         :error-messages="v$.available.$errors.map(e => e.$message)"
         label="Available"
+        item-title="text"
+        item-value="value"
         required
         return-object
         @blur="v$.available.$touch"
@@ -153,19 +153,30 @@
     </v-btn>
   </v-form>
 </template>
-
 <script setup>
 import { reactive, ref, provide, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, numeric } from '@vuelidate/validators';
+import { useAuthStore } from "@/stores/authStore"; // Import the authStore
 import Address from "@/components/rentals/form/Address.vue";
 import axios from 'axios';
+
+// Access auth store to get the logged-in user's data
+const authStore = useAuthStore();
+const loggedInUserId = authStore.user?.id; // Get the user ID from the store
+
+console.log(authStore)
 
 const marker = ref([36.8065, 10.181667]);
 
 function updateMarker(val) {
   marker.value = val;
 }
+
+const availabilityOptions = [
+  { text: "Available", value: true },
+  { text: "Unavailable", value: false },
+];
 
 // Form state
 const initialState = {
@@ -187,6 +198,7 @@ const initialState = {
   country: '',
   fullAddress: '',
   images: [],
+  createdBy: loggedInUserId || null, // Include the createdBy field
 };
 
 const state = reactive({ ...initialState });
@@ -227,31 +239,33 @@ async function submitForm() {
   const isValid = await v$.value.$validate();
   if (!isValid) return;
 
-  const formData = new FormData();
-  for (const key in state) {
-    if (key === 'images') {
-      state.images.forEach((image, index) => {
-        formData.append(`images[${index}]`, image);
-      });
-    } else if (typeof state[key] !== 'object') {
-      formData.append(key, state[key]);
-    } else {
-      for (const subKey in state[key]) {
-        formData.append(`${key}.${subKey}`, state[key][subKey]);
-      }
-    }
-  }
+  const rentalData = {
+    ...state,
+    createdBy: {
+     // id: authStore.user.id,
+      firstName: authStore.user.firstName,
+      lastName: authStore.user.lastName,
+      email: authStore.user.email,
+      role: authStore.user.role,
+    },
+    updatedBy: {
+      //id: authStore.user.id,
+      firstName: authStore.user.firstName,
+      lastName: authStore.user.lastName,
+      email: authStore.user.email,
+      role: authStore.user.role,
+    },
+  };
 
   try {
-    const response = await axios.post("http://localhost:3001/api/rental/add", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await axios.post("http://localhost:3001/api/rental/add", rentalData);
     console.log("Rental added successfully:", response.data);
     clear();
   } catch (error) {
     console.error("Failed to add rental:", error.response?.data || error.message);
   }
 }
+
 
 provide('location', { marker, updateMarker });
 provide('updateInfo', (newInfo) => {
@@ -262,5 +276,3 @@ provide('updateInfo', (newInfo) => {
   state.fullAddress = newInfo.fullAddress || '';
 });
 </script>
-
-<style scoped></style>

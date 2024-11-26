@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -41,6 +42,8 @@ func (r *rentalRepository) AddRental(ctx context.Context, rental types.Rental) e
 	if rental.FullAddress == "" {
 		rental.FullAddress = rental.StreetNumber + " " + rental.Street + ", " + rental.City + ", " + rental.Country
 	}
+
+	fmt.Println(rental)
 
 	_, err := r.collection.InsertOne(ctx, rental)
 	if err != nil {
