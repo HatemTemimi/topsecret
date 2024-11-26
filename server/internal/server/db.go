@@ -12,7 +12,10 @@ import (
 	"server/internal/rental/types"
 
 	"github.com/brianvoe/gofakeit/v6"
+	"golang.org/x/crypto/bcrypt"
 
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -115,6 +118,58 @@ func (db *DB) InitMockRentals() error {
 	}
 
 	log.Println("Mock rentals added successfully.")
+	return nil
+}
+
+func (db *DB) InitAdminUser() error {
+	collection := db.GetCollection("users")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Check if the admin user already exists
+	email := "hatem.altemimi@gmail.com"
+	filter := bson.M{"email": email}
+	var existingUser bson.M
+	err := collection.FindOne(ctx, filter).Decode(&existingUser)
+	if err == nil {
+		log.Println("Admin user already exists.")
+		return nil
+	} else if err != mongo.ErrNoDocuments {
+		log.Printf("Failed to query admin user: %v", err)
+		return err
+	}
+
+	// Hash the password
+	password := "11111111"
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("Failed to hash password: %v", err)
+		return err
+	}
+
+	// Create the admin user document
+	adminUser := bson.M{
+		"_id":       primitive.NewObjectID(),
+		"firstName": "Hatem",
+		"lastName":  "Temimi",
+		"email":     email,
+		"password":  string(hashedPassword),
+		"role":      "admin",
+		"phone":     "",
+		"address":   "",
+		"createdAt": time.Now(),
+		"updatedAt": time.Now(),
+		"active":    true,
+	}
+
+	// Insert the admin user into the collection
+	_, err = collection.InsertOne(ctx, adminUser)
+	if err != nil {
+		log.Printf("Failed to insert admin user: %v", err)
+		return err
+	}
+
+	log.Println("Admin user created successfully.")
 	return nil
 }
 

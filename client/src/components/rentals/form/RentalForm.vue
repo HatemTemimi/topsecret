@@ -165,8 +165,6 @@ import axios from 'axios';
 const authStore = useAuthStore();
 const loggedInUserId = authStore.user?.id; // Get the user ID from the store
 
-console.log(authStore)
-
 const marker = ref([36.8065, 10.181667]);
 
 function updateMarker(val) {
@@ -239,33 +237,41 @@ async function submitForm() {
   const isValid = await v$.value.$validate();
   if (!isValid) return;
 
-  const rentalData = {
+  const formData = new FormData();
+  for (const key in state) {
+    if (key === 'images') {
+      state.images.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
+      });
+    } else if (key === 'createdBy') {
+      formData.append(key, loggedInUserId); // Ensure createdBy is set to the logged-in user's ID
+    } else if (typeof state[key] !== 'object') {
+      formData.append(key, state[key]);
+    } else {
+      for (const subKey in state[key]) {
+        formData.append(`${key}.${subKey}`, state[key][subKey]);
+      }
+    }
+  }
+
+
+  const rental = {
     ...state,
-    createdBy: {
-     // id: authStore.user.id,
-      firstName: authStore.user.firstName,
-      lastName: authStore.user.lastName,
-      email: authStore.user.email,
-      role: authStore.user.role,
-    },
-    updatedBy: {
-      //id: authStore.user.id,
-      firstName: authStore.user.firstName,
-      lastName: authStore.user.lastName,
-      email: authStore.user.email,
-      role: authStore.user.role,
-    },
-  };
+    createdBy: loggedInUserId,
+    updatedBy: loggedInUserId
+  }
+
 
   try {
-    const response = await axios.post("http://localhost:3001/api/rental/add", rentalData);
+    const response = await axios.post("http://localhost:3001/api/rental/add", rental, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     console.log("Rental added successfully:", response.data);
     clear();
   } catch (error) {
     console.error("Failed to add rental:", error.response?.data || error.message);
   }
 }
-
 
 provide('location', { marker, updateMarker });
 provide('updateInfo', (newInfo) => {

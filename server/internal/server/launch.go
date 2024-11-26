@@ -32,14 +32,15 @@ type Server struct {
 
 // SetupRouter initializes routing handlers using services and repositories
 func (s *Server) SetupRouter(e *echo.Echo, cfg *config.Config) {
-	// Initialize the rental repository, service, and handler
-	rentalRepo := rentalRepository.NewRentalRepository(s.Db.database)
-	rentalService := rentalService.NewRentalService(rentalRepo)
-	rentalHandler := rentalHandler.NewRentalHandler(rentalService)
 
 	userRepository := userRepository.NewUserRepository(s.Db.database)
 	userService := userService.NewUserService(userRepository)
 	userHandler := userHandler.NewUserHandler(userService)
+
+	// Initialize the rental repository, service, and handler
+	rentalRepo := rentalRepository.NewRentalRepository(s.Db.database)
+	rentalService := rentalService.NewRentalService(rentalRepo)
+	rentalHandler := rentalHandler.NewRentalHandler(rentalService, userService)
 
 	// Create the PlacesService using the API key from config
 	placesService := service.NewPlacesService(cfg.GooglePlacesAPIKey)

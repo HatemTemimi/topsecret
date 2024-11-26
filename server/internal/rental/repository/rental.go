@@ -43,7 +43,9 @@ func (r *rentalRepository) AddRental(ctx context.Context, rental types.Rental) e
 		rental.FullAddress = rental.StreetNumber + " " + rental.Street + ", " + rental.City + ", " + rental.Country
 	}
 
-	fmt.Println(rental)
+	fmt.Println(rental.CreatedBy)
+
+	fmt.Println(rental.UpdatedBy)
 
 	_, err := r.collection.InsertOne(ctx, rental)
 	if err != nil {

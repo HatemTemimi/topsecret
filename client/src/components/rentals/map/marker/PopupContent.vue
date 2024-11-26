@@ -7,7 +7,7 @@ const router = useRouter();
 const props = defineProps<{ rental: { id: string; name: string; fullAddress: string } }>();
 
 const navigateToRental = () => {
-  router.push(`/details/${props.rental.id}`);
+  router.push(`/rental/details/${props.rental.id}`);
 };
 </script>
 

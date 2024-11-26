@@ -3,8 +3,6 @@ package types
 import (
 	"time"
 
-	"server/internal/user/types"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -30,6 +28,6 @@ type Rental struct {
 	Tags         []string           `json:"tags" bson:"tags"`
 	CreatedAt    time.Time          `json:"createdAt" bson:"createdAt"`
 	UpdatedAt    time.Time          `json:"updatedAt" bson:"updatedAt"`
-	CreatedBy    types.User         `json:"createdBy" bson:"createdBy"`
-	UpdatedBy    types.User         `json:"updatedBy" bson:"updatedBy"`
+	CreatedBy    primitive.ObjectID `json:"createdBy" bson:"createdBy"` // Reference to User ID
+	UpdatedBy    primitive.ObjectID `json:"updatedBy" bson:"updatedBy"` // Reference to User ID
 }

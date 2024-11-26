@@ -1,25 +1,45 @@
 package handler
 
 import (
-	"log"
+	"fmt"
 	"net/http"
-	"server/internal/rental/service"
+	service "server/internal/rental/service"
+
 	"server/internal/rental/types"
+	userService "server/internal/user/service"
 
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type RentalHandler struct {
-	service service.RentalService
+	service     service.RentalService
+	userService userService.UserService
 }
 
-func NewRentalHandler(service service.RentalService) *RentalHandler {
-	return &RentalHandler{service: service}
+func NewRentalHandler(service service.RentalService, userService userService.UserService) *RentalHandler {
+	return &RentalHandler{service: service, userService: userService}
 }
 
 // AddRental handles the POST request to add a new rental.
 func (h *RentalHandler) AddRental(c echo.Context) error {
 	var rental types.Rental
+
+	id, err := primitive.ObjectIDFromHex(c.FormValue("createdBy"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
+	}
+	userID, err := primitive.ObjectIDFromHex(id.Hex())
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
+	}
+
+	user, err := h.userService.GetUserByID(c.Request().Context(), userID.Hex())
+	if err != nil || user == nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "user does not exist"})
+	}
+	fmt.Println("user:")
+	fmt.Println(user)
 
 	// Parse form fields
 	rental.Name = c.FormValue("name")
@@ -30,6 +50,8 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 	rental.FullAddress = c.FormValue("fullAddress")
 	rental.Lat = c.FormValue("lat")
 	rental.Lng = c.FormValue("lng")
+	rental.CreatedBy = userID
+	rental.UpdatedBy = userID
 
 	// Parse boolean for "agree" field
 	agree := c.FormValue("agree")
@@ -45,9 +67,6 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 			rental.Images = append(rental.Images, file.Filename)
 		}
 	}
-
-	// Log rental data for debugging
-	log.Printf("Parsed rental data: %+v\n", rental)
 
 	// Call the service to add the rental
 	if err := h.service.AddRental(c.Request().Context(), rental); err != nil {

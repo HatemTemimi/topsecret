@@ -21,13 +21,13 @@ const routes = [
         component: Search,
     },
     {
-        path: '/rentals/create',
+        path: '/rental/create',
         name: 'create',
         component: Create,
         meta: { requiresAuth: true }, // Protect this route
     },
     {
-        path: '/rentals/details/:id',
+        path: '/rental/details/:id',
         name: 'details',
         component: Details,
         meta: { requiresAuth: true },
