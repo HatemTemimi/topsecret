@@ -56,7 +56,7 @@ const validateLocation = async (selectedModel: any) => {
     console.log('Latitude:', lat, 'Longitude:', lng);
 
     router.push({
-      path: '/home',
+      path: '/rentals',
       query: { lat, lng },
     });
   } catch (error) {
@@ -68,12 +68,8 @@ const validateLocation = async (selectedModel: any) => {
 </script>
 
 <template>
-  <v-card
-    class="w-1/3 h-1/3 flex justify-center items-center p-8"
-    density="comfortable"
-    :loading="loading"
-  >
     <v-autocomplete
+      class="w-2/3"
       clearable
       focused
       hide-no-data
@@ -88,5 +84,4 @@ const validateLocation = async (selectedModel: any) => {
       @update:search="debouncedSearch"
       @update:modelValue="validateLocation"
     ></v-autocomplete>
-  </v-card>
 </template>
