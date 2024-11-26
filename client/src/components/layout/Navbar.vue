@@ -14,19 +14,28 @@ const logout = () => {
 </script>
 
 <template>
-  <v-app-bar rounded>
+  <v-app-bar rounded
+  image="https://picsum.photos/1920/1080?random" 
+
+  class="px-8"
+  >
     <v-app-bar-title>
-      Darmap
+      Dar/win
     </v-app-bar-title>
 
-    <v-spacer></v-spacer>
 
     <!-- Navbar for Authenticated Users -->
     <template v-if="authStore.isAuthenticated">
       <!-- Greeting -->
-      <span>Hello, {{ authStore.user?.firstName }}</span>
 
       <!-- Links available to authenticated users -->
+
+
+      <router-link to="/rentals">
+        <v-btn icon>
+          <v-icon>mdi-home</v-icon>
+        </v-btn>
+      </router-link>
       <router-link to="/rentals/search">
         <v-btn icon>
           <v-icon>mdi-magnify</v-icon>
@@ -38,18 +47,23 @@ const logout = () => {
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </router-link>
-
-      <router-link to="/rentals">
+      <router-link to="/rentals/user">
         <v-btn icon>
-          <v-icon>mdi-home</v-icon>
+          <v-icon>mdi-arrange-bring-forward</v-icon>
         </v-btn>
       </router-link>
+
+
+      <span>Hello, {{ authStore.user?.firstName }}</span>
 
       <!-- Logout Button -->
       <v-btn @click="logout" icon>
         <v-icon>mdi-logout</v-icon>
       </v-btn>
+
     </template>
+
+
 
     <!-- Navbar for Unauthenticated Users -->
     <template v-else>

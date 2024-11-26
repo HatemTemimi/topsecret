@@ -38,9 +38,6 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 	if err != nil || user == nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "user does not exist"})
 	}
-	fmt.Println("user:")
-	fmt.Println(user)
-
 	// Parse form fields
 	rental.Name = c.FormValue("name")
 	rental.StreetNumber = c.FormValue("streetNumber")
@@ -66,6 +63,7 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 			// Here, we just add the filename for demonstration; in practice, you'd save the file
 			rental.Images = append(rental.Images, file.Filename)
 		}
+		rental.Images = append(rental.Images, "https://cdn.vuetifyjs.com/images/cards/hotel.jpg")
 	}
 
 	// Call the service to add the rental
@@ -133,4 +131,28 @@ func (h *RentalHandler) DeleteRental(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "Rental deleted successfully"})
+}
+
+// GetRentalsByUserID handles the GET request to retrieve rentals by a specific user ID
+func (h *RentalHandler) GetRentalsByUserID(c echo.Context) error {
+	userID := c.Param("id")
+	fmt.Println(userID)
+	if userID == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "User ID is required"})
+	}
+
+	// Validate and convert the user ID
+	_, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid User ID format"})
+	}
+
+	// Fetch rentals for the user
+	rentals, err := h.service.GetRentalsByUserID(c.Request().Context(), userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve rentals"})
+	}
+
+	// Return the rentals (empty list if no rentals found)
+	return c.JSON(http.StatusOK, rentals)
 }

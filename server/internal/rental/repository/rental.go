@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -19,6 +18,7 @@ type RentalRepository interface {
 	AddRental(ctx context.Context, rental types.Rental) error
 	GetAllRentals(ctx context.Context) ([]types.Rental, error)
 	GetRentalByID(ctx context.Context, id string) (*types.Rental, error)
+	GetRentalsByUserID(ctx context.Context, id string) ([]types.Rental, error)
 	UpdateRental(ctx context.Context, id string, updatedData types.Rental) error
 	DeleteRental(ctx context.Context, id string) error
 }
@@ -42,10 +42,6 @@ func (r *rentalRepository) AddRental(ctx context.Context, rental types.Rental) e
 	if rental.FullAddress == "" {
 		rental.FullAddress = rental.StreetNumber + " " + rental.Street + ", " + rental.City + ", " + rental.Country
 	}
-
-	fmt.Println(rental.CreatedBy)
-
-	fmt.Println(rental.UpdatedBy)
 
 	_, err := r.collection.InsertOne(ctx, rental)
 	if err != nil {
@@ -102,6 +98,39 @@ func (r *rentalRepository) GetRentalByID(ctx context.Context, id string) (*types
 	}
 
 	return &rental, nil
+}
+
+// GetRentalsByUserID retrieves rentals associated with a specific user ID
+func (r *rentalRepository) GetRentalsByUserID(ctx context.Context, userID string) ([]types.Rental, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	// Convert userID to ObjectID
+	objectID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		log.Printf("Invalid UserID format: %v", err)
+		return nil, errors.New("invalid UserID format")
+	}
+
+	// Query to find rentals by createdBy
+	filter := bson.M{"createdBy": objectID}
+
+	// Execute the query
+	cursor, err := r.collection.Find(ctx, filter)
+	if err != nil {
+		log.Printf("Error finding rentals by userID: %v", err)
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	// Decode rentals into a slice
+	var rentals []types.Rental
+	if err = cursor.All(ctx, &rentals); err != nil {
+		log.Printf("Error decoding rentals: %v", err)
+		return nil, err
+	}
+
+	return rentals, nil
 }
 
 // UpdateRental updates an existing rental by its ID

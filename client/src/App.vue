@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 </script>
 
 <template>
-  <v-layout class="rounded-md p-2">
+  <v-layout class="rounded-md p-4">
     <Navbar/>
     <v-main class="d-flex align-center justify-center">
       <RouterView/>

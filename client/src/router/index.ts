@@ -6,6 +6,7 @@ import Create from "@/views/Create.vue";
 import Details from "@/views/Details.vue";
 import Register from "@/views/Register.vue";
 import Login from '@/views/Login.vue';
+import UserRentals from '@/views/MyRentals.vue';
 
 // Define routes
 const routes = [
@@ -30,6 +31,12 @@ const routes = [
         path: '/rental/details/:id',
         name: 'details',
         component: Details,
+        meta: { requiresAuth: true },
+    },
+    {
+        path: '/rentals/user',
+        name: 'userRentals',
+        component: UserRentals,
         meta: { requiresAuth: true },
     },
     {
