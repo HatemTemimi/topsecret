@@ -17,7 +17,7 @@ onMounted(() => {
   <v-card
     class="h-[90vh] w-full flex flex-col justify-center items-center p-8"
     density="comfortable"
-    image="../../../../public/img.jpg"
+    image="/img.jpg"
   >
     <transition name="fade-in">
 

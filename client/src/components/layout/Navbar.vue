@@ -53,7 +53,6 @@ const logout = () => {
         </v-btn>
       </router-link>
 
-
       <span>Hello, {{ authStore.user?.firstName }}</span>
 
       <!-- Logout Button -->
