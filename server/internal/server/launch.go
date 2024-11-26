@@ -84,6 +84,7 @@ func (s *Server) SetupAndLaunch(e *echo.Echo, cfg *config.Config) {
 
 	s.Db = mongoDB
 	s.Db.InitMockRentals()
+	s.Db.InitAdminUser()
 
 	// Initialize router with configuration
 	s.SetupRouter(e, cfg)

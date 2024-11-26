@@ -33,7 +33,7 @@ const logout = () => {
         </v-btn>
       </router-link>
 
-      <router-link to="/rentals/create">
+      <router-link to="/rental/create">
         <v-btn icon>
           <v-icon>mdi-plus</v-icon>
         </v-btn>

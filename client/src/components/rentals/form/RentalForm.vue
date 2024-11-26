@@ -145,12 +145,23 @@
         @change="v$.agree.$touch"
     ></v-checkbox>
 
+
     <v-btn type="submit" class="me-4">
       Submit
     </v-btn>
     <v-btn @click="clear">
       Clear
     </v-btn>
+
+
+    <!-- Toast Notification -->
+    <v-snackbar
+      v-model="toast.show"
+      color="success"
+      :timeout="10000"
+    >
+      {{ toast.message }}
+    </v-snackbar>
   </v-form>
 </template>
 <script setup>
@@ -170,6 +181,13 @@ const marker = ref([36.8065, 10.181667]);
 function updateMarker(val) {
   marker.value = val;
 }
+
+// Toast Notification State
+const toast = reactive({
+  show: false,
+  message: "",
+  color: "",
+});
 
 const availabilityOptions = [
   { text: "Available", value: true },
@@ -266,10 +284,17 @@ async function submitForm() {
     const response = await axios.post("http://localhost:3001/api/rental/add", rental, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+        // Show success toast
+    toast.message = "Rental Added Successfully!";
+    toast.color = "success";
+    toast.show = true;
     console.log("Rental added successfully:", response.data);
     clear();
   } catch (error) {
     console.error("Failed to add rental:", error.response?.data || error.message);
+    toast.message = "Could not add rental";
+    toast.color = "error";
+    toast.show = true;
   }
 }
 

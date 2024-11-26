@@ -67,6 +67,10 @@ const submitForm = async () => {
     }, 2000);
   } catch (err: any) {
     error.value = err.response?.data?.error || "Login failed. Please try again.";
+        // Show success toast
+    toast.message = "Login failed!";
+    toast.color = "error";
+    toast.show = true;
   }
 };
 
