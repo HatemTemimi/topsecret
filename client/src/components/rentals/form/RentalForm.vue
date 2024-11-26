@@ -102,10 +102,13 @@
 
       <v-select
         v-model="state.available"
-        :items="[true, false]"
+        :items="[
+          { state: 'Florida', abbr: 'FL' },
+          { state: 'Georgia', abbr: 'GA' }]"
         :error-messages="v$.available.$errors.map(e => e.$message)"
         label="Available"
         required
+        return-object
         @blur="v$.available.$touch"
         @input="v$.available.$touch"
       ></v-select>

@@ -3,9 +3,23 @@
     <div class="flex flex-row justify-between items-center">
       <!-- Filters Block -->
       <div name="filters" class="flex flex-row gap-4 items-center">
-        <!-- Location Autocomplete -->
+        <!-- Location Autocomplete 
         <div class="min-w-[250px]">
           <LocationAutocomplete />
+        </div>
+-->
+
+        <!-- Region Selection -->
+        <div class="min-w-[250px]">
+          <v-select
+            v-model="selectedRegion"
+            :items="regionOptions"
+            label="Select Region"
+            outlined
+            dense
+            clearable
+            @change="updateRegion"
+          ></v-select>
         </div>
 
         <!-- Bedrooms -->
@@ -40,6 +54,8 @@
             v-model="filters.available"
             :items="availabilityOptions"
             label="Availability"
+            item-title="text"
+            item-value="value"
             outlined
             dense
             clearable
@@ -58,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
+import { inject, ref } from "vue";
 import LocationAutocomplete from "./map/LocationAutocomplete.vue";
 
 // Inject shared state and update method from the parent
@@ -73,9 +89,63 @@ const availabilityOptions = [
   { text: "Unavailable", value: false },
 ];
 
+// Regions in Tunis Capital
+const regionCoordinates = ref({
+  Ariana: [
+    [36.866785, 10.165079],
+    [36.867583, 10.195508],
+    [36.854747, 10.195373],
+    [36.854033, 10.163997],
+  ],
+  "Tunis Centre": [
+    [36.806112, 10.167519],
+    [36.807963, 10.190217],
+    [36.800972, 10.190947],
+    [36.799844, 10.167839],
+  ],
+  "El Menzah": [
+    [36.834, 10.163],
+    [36.838, 10.185],
+    [36.825, 10.185],
+    [36.823, 10.163],
+  ],
+  "El Manar": [
+    [36.836, 10.155],
+    [36.840, 10.178],
+    [36.830, 10.178],
+    [36.828, 10.155],
+  ],
+  Mutuelleville: [
+    [36.822, 10.164],
+    [36.825, 10.180],
+    [36.815, 10.180],
+    [36.812, 10.164],
+  ],
+  Bardo: [
+    [36.806, 10.145],
+    [36.810, 10.165],
+    [36.800, 10.165],
+    [36.798, 10.145],
+  ],
+});
+
+// Region options for dropdown
+const regionOptions = Object.keys(regionCoordinates.value);
+
+// Selected region
+const selectedRegion = ref(null);
+
 // Update filters state
 const updateFiltersState = () => {
   updateFilters(filters);
+};
+
+// Update selected region
+const updateRegion = () => {
+  if (selectedRegion.value) {
+    const coords = regionCoordinates.value[selectedRegion.value];
+    updateFilters({ region: coords }); // Update filters with region's coordinates
+  }
 };
 
 // Apply filters explicitly
@@ -89,7 +159,9 @@ const resetFilters = () => {
     bedrooms: null,
     bathrooms: null,
     available: null,
+    region: null, // Reset region
   });
+  selectedRegion.value = null; // Clear region selection
 };
 </script>
 
