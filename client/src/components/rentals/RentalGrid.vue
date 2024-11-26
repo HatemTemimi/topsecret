@@ -15,15 +15,13 @@ const props = defineProps<{
         <!-- Iterate over rentals to display each as a card -->
         <v-col
           v-for="rental in rentals"
-          :key="rental.name"
+          :key="rental.id"
           cols="12"
           md="6"
           lg="4"
         >
           <CardTify
-            :title="rental.name"
-            :src="rental.images[0]"
-            :address="rental.fullAddress"
+            :rental="rental"
           />
         </v-col>
       </v-row>

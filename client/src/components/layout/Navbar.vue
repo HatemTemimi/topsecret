@@ -7,11 +7,9 @@ import { useRouter } from "vue-router";
 const isAuthenticated = ref(!!localStorage.getItem("token")); // Check if token exists in sessionStorage
 const router = useRouter();
 
-console.log(isAuthenticated.value)
-
 // Logout function
 const logout = () => {
-  sessionStorage.removeItem("token"); // Clear the token
+  localStorage.removeItem("token"); // Clear the token
   isAuthenticated.value = false; // Update authentication state
   router.push("/user/login"); // Redirect to login page
 };
