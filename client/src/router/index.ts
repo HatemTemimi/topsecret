@@ -57,12 +57,14 @@ const router = createRouter({
     routes,
 });
 
-// Middleware to check for authentication
 router.beforeEach((to, from, next) => {
     const authStore = useAuthStore();
 
-    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-        // Redirect to login if the route requires authentication and user is not authenticated
+    // Redirect authenticated users away from login and register pages
+    if ((to.name === 'login' || to.name === 'register') && authStore.isAuthenticated) {
+        next({ name: 'home' }); // Redirect to the home page
+    } else if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+        // Redirect to login if the route requires authentication and the user is not authenticated
         next({ name: 'login' });
     } else {
         // Proceed to the requested route
