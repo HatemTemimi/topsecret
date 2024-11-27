@@ -108,7 +108,6 @@
         item-title="text"
         item-value="value"
         required
-        return-object
         @blur="v$.available.$touch"
         @input="v$.available.$touch"
       ></v-select>
@@ -165,16 +164,19 @@
   </v-form>
 </template>
 <script setup>
-import { reactive, ref, provide, watch } from 'vue';
+import { reactive, ref, provide, watch, onMounted } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, numeric } from '@vuelidate/validators';
 import { useAuthStore } from "@/stores/authStore"; // Import the authStore
 import Address from "@/components/rentals/form/Address.vue";
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 
 // Access auth store to get the logged-in user's data
 const authStore = useAuthStore();
 const loggedInUserId = authStore.user?.id; // Get the user ID from the store
+
+const route = useRoute()
 
 const marker = ref([36.8065, 10.181667]);
 
@@ -197,12 +199,12 @@ const availabilityOptions = [
 // Form state
 const initialState = {
   name: '',
-  price: '',
-  bedrooms: '',
-  bathrooms: '',
-  areaSize: '',
-  available: null,
-  description: '',
+  price: 0,
+  bedrooms: 0,
+  bathrooms: 0,
+  areaSize: 0,
+  available: true,
+  description: 0,
   agree: null,
   geometry: {
     lat: marker.value[0],
@@ -215,9 +217,10 @@ const initialState = {
   fullAddress: '',
   images: [],
   createdBy: loggedInUserId || null, // Include the createdBy field
+  updatedBy: loggedInUserId || null, // Include the createdBy field
 };
 
-const state = reactive({ ...initialState });
+const state = reactive({ ...initialState, id:''});
 
 const rules = {
   name: { required },
@@ -251,48 +254,86 @@ function clear() {
   Object.assign(state, { ...initialState });
 }
 
+
+const isEditMode = ref(false)
+
+// Check if editing a rental
+onMounted(async () => {
+  const rentalId = route.params.id;
+  if (rentalId && rentalId !== "new") {
+    isEditMode.value = true;
+    await loadRental(rentalId);
+  }
+});
+
+const loadRental = async (id) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/rental/${id}`);
+    for (const key in response.data) {
+      if (key in state) {
+        state[key] = response.data[key];
+      }
+    }
+    state.images = []
+  } catch (error) {
+    console.error("Failed to load rental:", error.response?.data || error.message);
+    toast.message = "Could not load rental details";
+    toast.color = "red";
+    toast.show = true;
+  }
+};
+
 async function submitForm() {
+
   const isValid = await v$.value.$validate();
   if (!isValid) return;
 
   const formData = new FormData();
-  for (const key in state) {
-    if (key === 'images') {
-      state.images.forEach((image, index) => {
-        formData.append(`images[${index}]`, image);
-      });
-    } else if (key === 'createdBy') {
-      formData.append(key, loggedInUserId); // Ensure createdBy is set to the logged-in user's ID
-    } else if (typeof state[key] !== 'object') {
-      formData.append(key, state[key]);
+for (const key in state) {
+  if (key === "images") {
+    // Handle image files
+    state.images.forEach((image, index) => {
+      formData.append(`images[${index}]`, image);
+    });
+  } else if (key === "createdBy") {
+    // Handle createdBy separately
+    formData.append(key, loggedInUserId); 
+  } else if (typeof state[key] !== "object") {
+    // Convert numeric fields explicitly
+    const numericFields = ["price", "bedrooms", "bathrooms", "areaSize"];
+    if (numericFields.includes(key)) {
+      formData.append(key, Number(state[key]));
     } else {
-      for (const subKey in state[key]) {
-        formData.append(`${key}.${subKey}`, state[key][subKey]);
-      }
+      formData.append(key, state[key]);
+    }
+  } else {
+    // Handle nested objects
+    for (const subKey in state[key]) {
+      formData.append(`${key}.${subKey}`, state[key][subKey]);
     }
   }
+}
 
 
-  const rental = {
-    ...state,
-    createdBy: loggedInUserId,
-    updatedBy: loggedInUserId
-  }
-
+console.log(formData)
 
   try {
-    const response = await axios.post("http://localhost:3001/api/rental/add", rental, {
-      headers: { "Content-Type": "multipart/form-data" },
+    if (!isEditMode.value) {
+      const response = await axios.post("http://localhost:3001/api/rental/add", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
     });
-        // Show success toast
     toast.message = "Rental Added Successfully!";
+    console.log("Rental added successfully:", response.data);
+    } else {
+      const response = await axios.put(`http://localhost:3001/api/rental/${state.id}`, formData);
+      toast.message = "Rental updated successfully!";
+    }
     toast.color = "success";
     toast.show = true;
-    console.log("Rental added successfully:", response.data);
     clear();
   } catch (error) {
-    console.error("Failed to add rental:", error.response?.data || error.message);
-    toast.message = "Could not add rental";
+    console.error("Failed to save rental:", error.response?.data || error.message);
+    toast.message = "Could not save rental";
     toast.color = "error";
     toast.show = true;
   }

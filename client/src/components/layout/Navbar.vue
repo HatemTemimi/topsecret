@@ -15,50 +15,46 @@ const logout = () => {
 
 <template>
   <v-app-bar rounded
-  image="https://picsum.photos/1920/1080?random" 
-
   class="px-8"
+  theme="light"
   >
     <v-app-bar-title>
-      Dar/win
-    </v-app-bar-title>
 
+      <router-link to="/rentals">
+        <v-btn>
+          Dar/win
+        </v-btn>
+        </router-link>
+    </v-app-bar-title>
 
     <!-- Navbar for Authenticated Users -->
     <template v-if="authStore.isAuthenticated">
-      <!-- Greeting -->
-
       <!-- Links available to authenticated users -->
-
-
-      <router-link to="/rentals">
-        <v-btn icon>
-          <v-icon>mdi-home</v-icon>
-        </v-btn>
-      </router-link>
       <router-link to="/rentals/search">
-        <v-btn icon>
+        <v-btn color="secondary" icon>
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
       </router-link>
 
-      <router-link to="/rental/create">
-        <v-btn icon>
+      <router-link to="/rental/new">
+        <v-btn color="secondary" icon>
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </router-link>
-      <router-link to="/rentals/user">
-        <v-btn icon>
+      <router-link  to="/rentals/user">
+        <v-btn color="secondary" icon>
           <v-icon>mdi-arrange-bring-forward</v-icon>
         </v-btn>
       </router-link>
 
+      <div class="ml-2">
       <span>Hello, {{ authStore.user?.firstName }}</span>
 
       <!-- Logout Button -->
       <v-btn @click="logout" icon>
         <v-icon>mdi-logout</v-icon>
       </v-btn>
+      </div>
 
     </template>
 

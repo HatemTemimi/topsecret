@@ -26,6 +26,7 @@ onMounted(() => {
       hover
       density="comfortable"
         v-if="showSecondCard"
+        elevation-17
     >
       <v-card-title>
         Welcome to Dar/win

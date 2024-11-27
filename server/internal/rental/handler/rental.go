@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	service "server/internal/rental/service"
+	"strconv"
+	"time"
 
 	"server/internal/rental/types"
 	userService "server/internal/user/service"
@@ -107,12 +109,63 @@ func (h *RentalHandler) UpdateRental(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Rental ID is required"})
 	}
 
-	var updatedData types.Rental
-	if err := c.Bind(&updatedData); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input data"})
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid Rental ID format"})
 	}
 
-	if err := h.service.UpdateRental(c.Request().Context(), id, updatedData); err != nil {
+	var updatedRental types.Rental
+
+	// Parse and map form fields
+	updatedRental.Name = c.FormValue("name")
+	updatedRental.StreetNumber = c.FormValue("streetNumber")
+	updatedRental.Street = c.FormValue("street")
+	updatedRental.City = c.FormValue("city")
+	updatedRental.Country = c.FormValue("country")
+	updatedRental.FullAddress = c.FormValue("fullAddress")
+	updatedRental.Lat = c.FormValue("lat")
+	updatedRental.Lng = c.FormValue("lng")
+
+	// Parse numeric fields and handle conversion
+	if price := c.FormValue("price"); price != "" {
+		updatedRental.Price, _ = strconv.ParseInt(price, 10, 64)
+	}
+	if bedrooms := c.FormValue("bedrooms"); bedrooms != "" {
+		updatedRental.Bedrooms, _ = strconv.ParseInt(bedrooms, 10, 64)
+	}
+	if bathrooms := c.FormValue("bathrooms"); bathrooms != "" {
+		updatedRental.Bathrooms, _ = strconv.ParseInt(bathrooms, 10, 64)
+	}
+	if areaSize := c.FormValue("areaSize"); areaSize != "" {
+		updatedRental.AreaSize, _ = strconv.ParseInt(areaSize, 10, 64)
+	}
+
+	// Parse boolean fields
+	available := c.FormValue("available")
+	updatedRental.Available = available == "true" || available == "1"
+
+	agree := c.FormValue("agree")
+	updatedRental.Agree = agree == "true" || agree == "1"
+
+	// Parse description
+	updatedRental.Description = c.FormValue("description")
+
+	// Handle file uploads for images
+	form, err := c.MultipartForm()
+	if err == nil && form != nil {
+		updatedRental.Images = []string{}
+		files := form.File["images"]
+		for _, file := range files {
+			// Add the filename; in production, save the file and store the path
+			updatedRental.Images = append(updatedRental.Images, file.Filename)
+		}
+	}
+
+	// Update the `UpdatedAt` field
+	updatedRental.UpdatedAt = time.Now()
+
+	// Call the service to update the rental
+	if err := h.service.UpdateRental(c.Request().Context(), objectID.Hex(), updatedRental); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to update rental"})
 	}
 

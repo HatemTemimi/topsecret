@@ -22,7 +22,7 @@ const routes = [
         component: Search,
     },
     {
-        path: '/rental/create',
+        path: '/rental/:id',
         name: 'create',
         component: Create,
         meta: { requiresAuth: true }, // Protect this route

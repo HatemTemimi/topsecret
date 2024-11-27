@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, defineProps } from "vue";
+import { useRouter } from "vue-router";
 
 // Props
 const props = defineProps({
@@ -10,6 +11,16 @@ const props = defineProps({
 });
 
 const show = ref(false);
+const router = useRouter(); // Access Vue Router
+
+// Navigate to the rental details page
+const goToDetails = () => {
+  if (props.rental?.id) {
+    router.push(`/rental/${props.rental.id}`);
+  } else {
+    console.error("Rental ID is missing");
+  }
+};
 </script>
 
 <template>
@@ -32,9 +43,13 @@ const show = ref(false);
     </v-card-subtitle>
 
     <v-card-actions>
-      <!-- Explore Button -->
-      <v-btn color="orange-lighten-2" type="text">
-        Explore
+      <!-- Details Button -->
+      <v-btn
+        color="orange-lighten-2"
+        @click="goToDetails"
+      >
+        Details
+        <v-icon>mdi-eye-arrow-right</v-icon>
       </v-btn>
 
       <v-spacer></v-spacer>
@@ -63,6 +78,3 @@ const show = ref(false);
     </v-expand-transition>
   </v-card>
 </template>
-
-<style scoped>
-</style>
