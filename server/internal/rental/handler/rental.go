@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	service "server/internal/rental/service"
 	"strconv"
+	"strings"
 	"time"
 
 	"server/internal/rental/types"
@@ -27,47 +27,70 @@ func NewRentalHandler(service service.RentalService, userService userService.Use
 func (h *RentalHandler) AddRental(c echo.Context) error {
 	var rental types.Rental
 
-	id, err := primitive.ObjectIDFromHex(c.FormValue("createdBy"))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
-	}
-	userID, err := primitive.ObjectIDFromHex(id.Hex())
+	// Get user ID from form and validate it
+	userID, err := primitive.ObjectIDFromHex(c.FormValue("createdBy"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
 	}
 
+	// Verify that the user exists
 	user, err := h.userService.GetUserByID(c.Request().Context(), userID.Hex())
 	if err != nil || user == nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "user does not exist"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "User does not exist"})
 	}
-	// Parse form fields
+
+	// Parse rental details from form
 	rental.Name = c.FormValue("name")
 	rental.StreetNumber = c.FormValue("streetNumber")
 	rental.Street = c.FormValue("street")
 	rental.City = c.FormValue("city")
 	rental.Country = c.FormValue("country")
 	rental.FullAddress = c.FormValue("fullAddress")
+	rental.Description = c.FormValue("description")
+
+	// Parse numeric fields with fallback to 0
+	rental.Price, _ = strconv.ParseInt(c.FormValue("price"), 10, 64)
+	rental.Bedrooms, _ = strconv.ParseInt(c.FormValue("bedrooms"), 10, 64)
+	rental.Bathrooms, _ = strconv.ParseInt(c.FormValue("bathrooms"), 10, 64)
+	rental.AreaSize, _ = strconv.ParseInt(c.FormValue("areaSize"), 10, 64)
+
+	// Parse boolean fields
+	rental.Available = c.FormValue("available") == "true" || c.FormValue("available") == "1"
+	rental.Agree = c.FormValue("agree") == "true" || c.FormValue("agree") == "1"
+	rental.Status = c.FormValue("status") == "true" || c.FormValue("status") == "1"
+
+	// Parse location details
 	rental.Lat = c.FormValue("lat")
 	rental.Lng = c.FormValue("lng")
+
+	// Set createdBy and updatedBy fields
 	rental.CreatedBy = userID
 	rental.UpdatedBy = userID
 
-	// Parse boolean for "agree" field
-	agree := c.FormValue("agree")
-	rental.Agree = agree == "true" || agree == "1"
+	// Add tags if provided
+	tags := c.FormValue("tags")
+	if tags != "" {
+		rental.Tags = strings.Split(tags, ",") // Split tags by comma
+	}
 
-	// Parse images if any are uploaded
+	// Parse and handle uploaded images
 	form, err := c.MultipartForm()
 	if err == nil && form != nil {
-		rental.Images = []string{}
 		files := form.File["images"]
 		for _, file := range files {
-			// Here, we just add the filename for demonstration; in practice, you'd save the file
+			// Save the file or append its filename (adjust this as needed)
 			rental.Images = append(rental.Images, file.Filename)
 		}
+	}
+
+	// Provide a default image if none uploaded
+	if len(rental.Images) == 0 {
 		rental.Images = append(rental.Images, "https://cdn.vuetifyjs.com/images/cards/hotel.jpg")
 	}
 
+	// Set timestamps
+	rental.CreatedAt = time.Now()
+	rental.UpdatedAt = time.Now()
 	// Call the service to add the rental
 	if err := h.service.AddRental(c.Request().Context(), rental); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to add rental"})
@@ -189,7 +212,6 @@ func (h *RentalHandler) DeleteRental(c echo.Context) error {
 // GetRentalsByUserID handles the GET request to retrieve rentals by a specific user ID
 func (h *RentalHandler) GetRentalsByUserID(c echo.Context) error {
 	userID := c.Param("id")
-	fmt.Println(userID)
 	if userID == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "User ID is required"})
 	}

@@ -27,3 +27,16 @@ try {
   }
 }
 
+export async function addRental(data){
+  const response = await axios.post("http://localhost:3001/api/rental/add", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+});
+
+return response
+
+}
+
+export async function updateRental(id, data){
+  const response = await axios.put(`http://localhost:3001/api/rental/${id}`, data);
+  return response
+}

@@ -163,14 +163,15 @@
     </v-snackbar>
   </v-form>
 </template>
-<script setup>
+<script setup type="ts">
 import { reactive, ref, provide, watch, onMounted } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, numeric } from '@vuelidate/validators';
 import { useAuthStore } from "@/stores/authStore"; // Import the authStore
 import Address from "@/components/rentals/form/Address.vue";
-import axios from 'axios';
 import { useRoute } from 'vue-router';
+import { getRentalById, updateRental, addRental } from '@/api/rentals';
+import type { Rental } from '@/models/rental';
 
 // Access auth store to get the logged-in user's data
 const authStore = useAuthStore();
@@ -197,7 +198,7 @@ const availabilityOptions = [
 ];
 
 // Form state
-const initialState = {
+const initialState: Rental = {
   name: '',
   price: 0,
   bedrooms: 0,
@@ -216,8 +217,8 @@ const initialState = {
   country: '',
   fullAddress: '',
   images: [],
-  createdBy: loggedInUserId || null, // Include the createdBy field
-  updatedBy: loggedInUserId || null, // Include the createdBy field
+  createdBy: loggedInUserId || null, 
+  updatedBy: loggedInUserId || null, 
 };
 
 const state = reactive({ ...initialState, id:''});
@@ -263,15 +264,17 @@ onMounted(async () => {
   if (rentalId && rentalId !== "new") {
     isEditMode.value = true;
     await loadRental(rentalId);
+  } else {
+    clear()
   }
 });
 
 const loadRental = async (id) => {
   try {
-    const response = await axios.get(`http://localhost:3001/api/rental/${id}`);
-    for (const key in response.data) {
+    const data = await getRentalById(id)
+    for (const key in data) {
       if (key in state) {
-        state[key] = response.data[key];
+        state[key] = data[key];
       }
     }
     state.images = []
@@ -315,17 +318,15 @@ for (const key in state) {
 }
 
 
-console.log(formData)
 
   try {
     if (!isEditMode.value) {
-      const response = await axios.post("http://localhost:3001/api/rental/add", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
-    toast.message = "Rental Added Successfully!";
-    console.log("Rental added successfully:", response.data);
+      console.log(formData);
+      const response =  await addRental(formData)
+         toast.message = "Rental Added Successfully!";
+        console.log("Rental added successfully:", response.data);
     } else {
-      const response = await axios.put(`http://localhost:3001/api/rental/${state.id}`, formData);
+      await updateRental(state.id, formData)
       toast.message = "Rental updated successfully!";
     }
     toast.color = "success";
