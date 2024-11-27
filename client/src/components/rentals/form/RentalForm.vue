@@ -171,7 +171,6 @@ import { useAuthStore } from "@/stores/authStore"; // Import the authStore
 import Address from "@/components/rentals/form/Address.vue";
 import { useRoute } from 'vue-router';
 import { getRentalById, updateRental, addRental } from '@/api/rentals';
-import type { Rental } from '@/models/rental';
 
 // Access auth store to get the logged-in user's data
 const authStore = useAuthStore();
@@ -198,7 +197,7 @@ const availabilityOptions = [
 ];
 
 // Form state
-const initialState: Rental = {
+const initialState = {
   name: '',
   price: 0,
   bedrooms: 0,
