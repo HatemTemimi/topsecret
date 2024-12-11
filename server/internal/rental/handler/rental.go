@@ -12,6 +12,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 )
 
 type RentalHandler struct {
@@ -23,7 +28,25 @@ func NewRentalHandler(service service.RentalService, userService userService.Use
 	return &RentalHandler{service: service, userService: userService}
 }
 
-// AddRental handles the POST request to add a new rental.
+func getBasePath() string {
+	basePath := os.Getenv("ASSETS_BASE_PATH")
+	if basePath == "" {
+		basePath = "../assets/rentals"
+	}
+	return basePath
+}
+
+// mapImagePathsToURLs converts file paths to public URLs.
+func mapImagePathsToURLs(c echo.Context, imagePaths []string) []string {
+	baseURL := fmt.Sprintf("http://%s/", c.Request().Host) // Base URL for assets
+	var urls []string
+	for _, imagePath := range imagePaths {
+		url := fmt.Sprintf("%s%s", baseURL, strings.TrimPrefix(imagePath, "../"))
+		urls = append(urls, url)
+	}
+	return urls
+}
+
 func (h *RentalHandler) AddRental(c echo.Context) error {
 	var rental types.Rental
 
@@ -73,24 +96,54 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 		rental.Tags = strings.Split(tags, ",") // Split tags by comma
 	}
 
-	// Parse and handle uploaded images
+	// Generate a unique rental ID
+	rental.ID = primitive.NewObjectID()
+
+	// Create directories for rental images
+	rentalFolder := filepath.Join(getBasePath(), rental.ID.Hex(), "images")
+	err = os.MkdirAll(rentalFolder, os.ModePerm)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to create directory for rental images"})
+	}
+
+	// Parse and save uploaded images
 	form, err := c.MultipartForm()
 	if err == nil && form != nil {
 		files := form.File["images"]
 		for _, file := range files {
-			// Save the file or append its filename (adjust this as needed)
-			rental.Images = append(rental.Images, file.Filename)
+			src, err := file.Open()
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to read uploaded file"})
+			}
+			defer src.Close()
+
+			// Create destination file
+			dstPath := filepath.Join(rentalFolder, file.Filename)
+			dst, err := os.Create(dstPath)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to save uploaded file"})
+			}
+			defer dst.Close()
+
+			// Copy the file content
+			if _, err = io.Copy(dst, src); err != nil {
+				return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to write file content"})
+			}
+
+			// Add relative path to the rental images
+			rental.Images = append(rental.Images, strings.TrimPrefix(dstPath, "../internal/"))
 		}
 	}
 
-	// Provide a default image if none uploaded
+	// Validate that at least one image was uploaded
 	if len(rental.Images) == 0 {
-		rental.Images = append(rental.Images, "https://cdn.vuetifyjs.com/images/cards/hotel.jpg")
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "At least one image is required for the rental"})
 	}
 
 	// Set timestamps
 	rental.CreatedAt = time.Now()
 	rental.UpdatedAt = time.Now()
+
 	// Call the service to add the rental
 	if err := h.service.AddRental(c.Request().Context(), rental); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to add rental"})
@@ -101,14 +154,21 @@ func (h *RentalHandler) AddRental(c echo.Context) error {
 
 // GetAllRentals handles the GET request to retrieve all rentals
 func (h *RentalHandler) GetAllRentals(c echo.Context) error {
+	// Fetch all rentals
 	rentals, err := h.service.GetAllRentals(c.Request().Context())
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve rentals"})
 	}
+
+	// Convert image file paths to public URLs for each rental
+	for i := range rentals {
+		rentals[i].Images = mapImagePathsToURLs(c, rentals[i].Images)
+	}
+
+	// Return the modified rentals
 	return c.JSON(http.StatusOK, rentals)
 }
 
-// GetRentalByID handles the GET request to retrieve a single rental by ID
 func (h *RentalHandler) GetRentalByID(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -120,8 +180,12 @@ func (h *RentalHandler) GetRentalByID(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve rental"})
 	}
 	if rental == nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Rental not found"})
+		return c.JSON(http.StatusOK, map[string]string{"message": "Rental not found", "status": "empty"})
 	}
+
+	// Convert image file paths to public URLs using the helper
+	rental.Images = mapImagePathsToURLs(c, rental.Images)
+
 	return c.JSON(http.StatusOK, rental)
 }
 
@@ -228,6 +292,11 @@ func (h *RentalHandler) GetRentalsByUserID(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve rentals"})
 	}
 
-	// Return the rentals (empty list if no rentals found)
+	// Convert image file paths to public URLs using the helper
+
+	for i := range rentals {
+		rentals[i].Images = mapImagePathsToURLs(c, rentals[i].Images)
+	}
+
 	return c.JSON(http.StatusOK, rentals)
 }

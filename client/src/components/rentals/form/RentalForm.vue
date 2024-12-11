@@ -295,7 +295,7 @@ for (const key in state) {
   if (key === "images") {
     // Handle image files
     state.images.forEach((image, index) => {
-      formData.append(`images[${index}]`, image);
+      formData.append(`images`, image);
     });
   } else if (key === "createdBy") {
     // Handle createdBy separately
@@ -315,6 +315,7 @@ for (const key in state) {
     }
   }
 }
+
 
 
 

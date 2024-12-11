@@ -19,11 +19,6 @@
         <Marker :rental="item" />
       </div>
 
-      <!-- Red Polygon -->
-      <l-polygon
-        :lat-lngs="polygonCoordinates"
-        :options="polygonOptions"
-      ></l-polygon>
     </l-map>
   </div>
 </template>

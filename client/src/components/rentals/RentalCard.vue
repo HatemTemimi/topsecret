@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps } from "vue";
+import {ref, defineProps, onMounted} from "vue";
 import { useRouter } from "vue-router";
 
 // Props
@@ -21,6 +21,10 @@ const goToDetails = () => {
     console.error("Rental ID is missing");
   }
 };
+
+onMounted(()=>{
+  console.log(props.rental.images[0])
+})
 </script>
 
 <template>

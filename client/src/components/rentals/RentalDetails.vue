@@ -19,6 +19,7 @@ const error = ref<string | null>(null);
 const fetchRental = async () => {
   try {
     rental.value = await getRentalById(rentalId);
+    console.log(rental.value)
   } catch (err) {
     console.error('Failed to fetch rental:', err);
     error.value = 'Failed to fetch rental details.';

@@ -8,6 +8,10 @@ import (
 
 	userHandler "server/internal/user/handler"
 
+	"fmt"
+	"log"
+	"os"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -51,5 +55,11 @@ func (router *Router) Init(e *echo.Echo) {
 	e.PUT("/api/rental/:id", router.RentalHandler.UpdateRental)
 	e.DELETE("/api/rental/:id", router.RentalHandler.DeleteRental)
 	e.GET("/api/rental/user/:id", router.RentalHandler.GetRentalsByUserID)
+	e.Static("/assets", "../assets")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(path)
 
 }

@@ -29,8 +29,10 @@ provide("updateFilters", (newFilters: Partial<typeof filters.value>) => {
 // Fetch Rentals
 onMounted(async () => {
   try {
-    const data = await getRentals();
-    rentals.value = data;
+   
+    rentals.value  =  await getRentals();
+    console.log(rentals.value)
+
   } catch (error) {
     console.error("Failed to fetch rentals:", error);
   }
