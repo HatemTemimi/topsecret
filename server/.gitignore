@@ -2,5 +2,6 @@
 logs
 *.log
 config/.env.*
+server/assets/*
 
 
