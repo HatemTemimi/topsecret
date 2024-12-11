@@ -6,8 +6,12 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"mime/multipart"
 	"os"
+	"path/filepath"
+	"server/internal/rental/types"
 	"strings"
+	"sync"
 
 	"github.com/disintegration/imaging"
 	"github.com/labstack/echo/v4"
@@ -65,4 +69,48 @@ func MapImagePathsToURLs(c echo.Context, imagePaths []string) []string {
 		urls = append(urls, url)
 	}
 	return urls
+}
+
+// processImages processes multiple images concurrently. Each image is resized or compressed, and the result is stored in the rental images array.
+func ProcessImages(files []*multipart.FileHeader, rentalFolder string, rental *types.Rental, wg *sync.WaitGroup, mu *sync.Mutex) error {
+	var processingErr error
+
+	// Create goroutines for processing each image
+	for _, file := range files {
+		wg.Add(1)
+		go func(file *multipart.FileHeader) {
+			defer wg.Done()
+
+			src, err := file.Open()
+			if err != nil {
+				processingErr = err
+				return
+			}
+			defer src.Close()
+
+			// Destination path for saving the processed image
+			dstPath := filepath.Join(rentalFolder, file.Filename)
+
+			// Resize or compress the image
+			if err := ResizeImage(src, dstPath); err != nil {
+				processingErr = err
+				return
+			}
+
+			// Append processed image path to rental images
+			mu.Lock()
+			rental.Images = append(rental.Images, strings.TrimPrefix(dstPath, "../"))
+			mu.Unlock()
+		}(file)
+	}
+
+	// Wait for all goroutines to finish
+	wg.Wait()
+
+	// Check if any error occurred during image processing
+	if processingErr != nil {
+		return fmt.Errorf("failed to process images: %w", processingErr)
+	}
+
+	return nil
 }
