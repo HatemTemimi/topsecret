@@ -14,7 +14,7 @@ api.interceptors.request.use(
     const authStore = useAuthStore(); // Access the auth store
 
     if (
-      config.url?.includes("/authenticate") || 
+      config.url?.includes("/login") || 
       config.url?.includes("/register")
     ) {
       // Skip additional checks for login and register endpoints
@@ -24,7 +24,6 @@ api.interceptors.request.use(
     // If not authenticated, redirect to login
     if (!authStore.isAuthenticated) {
       console.error("User not authenticated, redirecting to login.");
-      router.push("/user/login"); // Redirect to login
       throw new axios.Cancel("Request canceled due to unauthenticated user.");
     }
 

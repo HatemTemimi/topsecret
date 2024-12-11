@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import axios from "axios";
+import router from "@/router"; 
 
 
 export const useAuthStore = defineStore("auth", {
@@ -46,6 +47,7 @@ export const useAuthStore = defineStore("auth", {
         } else {
           this.isAuthenticated = false;
           this.user = null;
+          router.push("/user/login"); // Redirect to login page
         }
       } catch (error) {
         console.error("Auth check failed:", error);
@@ -64,6 +66,7 @@ export const useAuthStore = defineStore("auth", {
 
         this.isAuthenticated = false;
         this.user = null;
+        router.push("/user/login");
       } catch (error) {
         console.error("Logout failed:", error);
         throw error;
