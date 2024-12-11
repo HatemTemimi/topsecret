@@ -4,7 +4,6 @@ import { useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import { useAuthStore } from "@/stores/authStore";
-import axios from "axios";
 
 // Pinia store
 const authStore = useAuthStore();
@@ -49,12 +48,8 @@ const submitForm = async () => {
   }
 
   try {
-    // Send login request to the backend
-    const response = await axios.post("http://localhost:3001/users/authenticate", state);
-    const { token, user } = response.data;
-
-    // Update authStore with token and user data
-    authStore.login(token, user);
+    // Call the login action in authStore
+    await authStore.login(state);
 
     // Show success toast
     toast.message = "Login successful! Redirecting...";
@@ -66,9 +61,8 @@ const submitForm = async () => {
       router.push("/rentals");
     }, 2000);
   } catch (err: any) {
-    error.value = err.response?.data?.error || "Login failed. Please try again.";
-        // Show success toast
-    toast.message = "Login failed!";
+    error.value = "Login failed. Please try again.";
+    toast.message = error.value;
     toast.color = "error";
     toast.show = true;
   }
@@ -82,7 +76,6 @@ const clearForm = () => {
   error.value = null;
 };
 </script>
-
 
 <template>
   <v-container class="py-5">
@@ -140,7 +133,7 @@ const clearForm = () => {
     <!-- Toast Notification -->
     <v-snackbar
       v-model="toast.show"
-      color="success"
+      :color="toast.color"
       :timeout="10000"
     >
       {{ toast.message }}

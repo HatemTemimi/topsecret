@@ -5,6 +5,7 @@ import { useAuthStore } from "@/stores/authStore"; // Import the auth store
 // Create Axios instance
 const api = axios.create({
   baseURL: "http://localhost:3001/", // Replace with your API base URL
+  withCredentials: true, // Include cookies in requests
 });
 
 // Request Interceptor
@@ -16,15 +17,15 @@ api.interceptors.request.use(
       config.url?.includes("/authenticate") || 
       config.url?.includes("/register")
     ) {
-      // Skip token for login and register endpoints
+      // Skip additional checks for login and register endpoints
       return config;
     }
 
-    if (authStore.token) {
-      config.headers["Authorization"] = `Bearer ${authStore.token}`;
-    } else {
-      console.error("No token found, redirecting to login.");
-      router.push("/user/login"); // Redirect to login if no token
+    // If not authenticated, redirect to login
+    if (!authStore.isAuthenticated) {
+      console.error("User not authenticated, redirecting to login.");
+      router.push("/user/login"); // Redirect to login
+      throw new axios.Cancel("Request canceled due to unauthenticated user.");
     }
 
     return config;
@@ -37,13 +38,17 @@ api.interceptors.request.use(
 // Response Interceptor
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     const authStore = useAuthStore(); // Access the auth store
 
     if (error.response?.status === 401) {
       console.error("Unauthorized, logging out and redirecting to login.");
-      authStore.logout(); // Clear auth state
-      router.push("/user/login"); // Redirect to login if unauthorized
+
+      try {
+        await authStore.logout(); // Clear auth state
+      } catch (logoutError) {
+        console.error("Failed to log out:", logoutError);
+      }
     }
 
     return Promise.reject(error);

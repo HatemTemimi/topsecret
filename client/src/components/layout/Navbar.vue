@@ -7,7 +7,8 @@ const authStore = useAuthStore(); // Access Pinia authStore
 const router = useRouter();
 
 // Logout function
-const logout = () => {
+const logout = async  () => {
+  await router.isReady()
   authStore.logout(); // Clear auth state
   router.push("/user/login"); // Redirect to login page
 };

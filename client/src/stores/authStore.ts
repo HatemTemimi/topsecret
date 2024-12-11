@@ -1,34 +1,73 @@
 import { defineStore } from "pinia";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import axios from "axios";
+
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
-    token: sessionStorage.getItem("token") || null, // JWT token
-    isAuthenticated: !!sessionStorage.getItem("token"),
+    isAuthenticated: false, // Authentication status
     user: null as { email: string; firstName: string; lastName: string; id: string; role: string } | null, // User details
   }),
   actions: {
-    login(token: string, user: any) {
-      this.token = token;
-      this.isAuthenticated = true;
-      this.user = user;
-      sessionStorage.setItem("token", token); // Store token in sessionStorage
-      sessionStorage.setItem("user", JSON.stringify(user)); // Store user details in sessionStorage
-    },
-    loadSession() {
-      // Load session from sessionStorage
-      const token = sessionStorage.getItem("token");
-      const user = sessionStorage.getItem("user");
+    async login(credentials: { email: string; password: string }) {
 
-      this.token = token;
-      this.isAuthenticated = !!token;
-      this.user = user ? JSON.parse(user) : null;
+      try {
+        const cookies = useCookies(); // Access cookies
+
+        await axios.post("http://localhost:3001/api/auth/login", credentials, {
+          withCredentials: true, // Include cookies in the request
+        });
+
+        // Load user information from cookies
+        const encodedUserInfo = cookies.get("user_info");
+        if (encodedUserInfo) {
+          this.isAuthenticated = true;
+          this.user = encodedUserInfo;
+        } else {
+          throw new Error("User information not found in cookies.");
+        }
+      } catch (error) {
+        console.error("Login failed:", error);
+        throw error;
+      }
     },
-    logout() {
-      this.token = null;
-      this.isAuthenticated = false;
-      this.user = null;
-      sessionStorage.removeItem("token"); // Clear token from sessionStorage
-      sessionStorage.removeItem("user"); // Clear user details
+
+    async loadSession() {
+
+      try {
+        const cookies = useCookies(); // Access cookies
+
+        // Check for user info in cookies
+        const encodedUserInfo = cookies.get("user_info");
+        if (encodedUserInfo) {
+         // const user = JSON.parse(decodeURIComponent(encodedUserInfo)); // Decode and parse
+          this.isAuthenticated = true;
+          this.user = encodedUserInfo;
+        } else {
+          this.isAuthenticated = false;
+          this.user = null;
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        this.isAuthenticated = false;
+        this.user = null;
+      }
+    },
+
+    async logout() {
+      try {
+        const cookies = useCookies(); // Access cookies
+
+        await axios.post("http://localhost:3001/api/auth/logout", {}, { withCredentials: true });
+
+        cookies.remove("user_info");
+
+        this.isAuthenticated = false;
+        this.user = null;
+      } catch (error) {
+        console.error("Logout failed:", error);
+        throw error;
+      }
     },
   },
 });

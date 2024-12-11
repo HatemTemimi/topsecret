@@ -31,7 +31,6 @@ onMounted(async () => {
   try {
    
     rentals.value  =  await getRentals();
-    console.log(rentals.value)
 
   } catch (error) {
     console.error("Failed to fetch rentals:", error);

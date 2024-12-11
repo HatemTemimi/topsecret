@@ -4,21 +4,21 @@ import (
 	"errors"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // SecretKey is the secret used to sign tokens. Replace it with a secure key in production.
 var SecretKey = []byte("super-secret")
 
 // TokenExpiry defines the expiration time for the token (e.g., 72 hours)
-const TokenExpiry = time.Hour * 72
+const TokenExpiry = time.Hour * 24
 
 // JWTClaims represents the custom claims for the JWT token
 type JWTClaims struct {
 	UserID string `json:"userId"`
 	Email  string `json:"email"`
 	Role   string `json:"role"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 // GenerateToken generates a new JWT token with the provided user details
@@ -27,8 +27,9 @@ func GenerateToken(userID, email, role string) (string, error) {
 		UserID: userID,
 		Email:  email,
 		Role:   role,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(TokenExpiry).Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExpiry)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
 
