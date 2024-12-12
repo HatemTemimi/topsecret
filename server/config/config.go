@@ -37,21 +37,21 @@ func LoadConfig() (*Config, error) {
 
 	// Parse environment variables into Config struct
 	config := &Config{
-		Env:                getEnv("GO_ENV", "dev"),
-		GooglePlacesAPIKey: getEnv("GOOGLE_PLACES_API_KEY", ""),
-		MainPort:           getEnvAsInt("MAIN_PORT", 3001),
-		DatabaseName:       getEnv("DATABASE_NAME", "database"),
-		DatabaseUser:       getEnv("DATABASE_USER", "user"),
-		DatabasePassword:   getEnv("DATABASE_PASSWORD", "secret"),
-		DatabasePort:       getEnvAsInt("DATABASE_PORT", 27017),
-		DatabaseHost:       getEnv("DATABASE_HOST", "localhost"),
+		Env:                GetEnv("GO_ENV", "dev"),
+		GooglePlacesAPIKey: GetEnv("GOOGLE_PLACES_API_KEY", ""),
+		MainPort:           GetEnvAsInt("MAIN_PORT", 3001),
+		DatabaseName:       GetEnv("DATABASE_NAME", "database"),
+		DatabaseUser:       GetEnv("DATABASE_USER", "user"),
+		DatabasePassword:   GetEnv("DATABASE_PASSWORD", "secret"),
+		DatabasePort:       GetEnvAsInt("DATABASE_PORT", 27017),
+		DatabaseHost:       GetEnv("DATABASE_HOST", "localhost"),
 	}
 
 	return config, nil
 }
 
 // Helper function to read an environment variable or fallback to a default value
-func getEnv(key, defaultValue string) string {
+func GetEnv(key, defaultValue string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
 	}
@@ -59,8 +59,8 @@ func getEnv(key, defaultValue string) string {
 }
 
 // Helper function to read an integer environment variable or fallback to a default value
-func getEnvAsInt(key string, defaultValue int) int {
-	valueStr := getEnv(key, "")
+func GetEnvAsInt(key string, defaultValue int) int {
+	valueStr := GetEnv(key, "")
 	if value, err := strconv.Atoi(valueStr); err == nil {
 		return value
 	}

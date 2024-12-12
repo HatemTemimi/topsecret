@@ -8,7 +8,7 @@ import (
 )
 
 // SecretKey is the secret used to sign tokens. Replace it with a secure key in production.
-var SecretKey = []byte("super-secret")
+var SecretKey = []byte(GetEnv("JWT_SECRET", ""))
 
 // TokenExpiry defines the expiration time for the token (e.g., 72 hours)
 const TokenExpiry = time.Hour * 24

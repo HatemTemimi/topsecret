@@ -8,6 +8,8 @@ import (
 
 	userHandler "server/internal/user/handler"
 
+	authHandler "server/internal/auth/handler"
+
 	"fmt"
 	"log"
 	"os"
@@ -21,6 +23,7 @@ type Router struct {
 	PlacesHandler *placesHandler.PlacesHandler
 	RentalHandler *rentalHandler.RentalHandler
 	UserHandler   *userHandler.UserHandler
+	AuthHandler   *authHandler.OAuthHandler
 }
 
 func (router *Router) Init(e *echo.Echo) {
@@ -37,15 +40,15 @@ func (router *Router) Init(e *echo.Echo) {
 	//	Claims:     &config.JWTClaims{},
 	// }))
 
-	// User endpoints
+	apiGroup.POST("/auth/google/login", router.AuthHandler.GoogleLogin)
+	apiGroup.GET("/auth/google/callback", router.AuthHandler.GoogleCallback)
+	apiGroup.POST("/auth/login", router.AuthHandler.AuthenticateWithCookie) // Authenticate and get a token
+	apiGroup.GET("/auth/me", router.AuthHandler.GetAuthUser)                // Check auth and return user
+	apiGroup.POST("/auth/logout", router.AuthHandler.Logout)                // Logout the user
 
-	// Public Routes
-	apiGroup.POST("/users/create", router.UserHandler.CreateUser)           // Create a new user
-	apiGroup.POST("/auth/login", router.UserHandler.AuthenticateWithCookie) // Authenticate and get a token
-	apiGroup.GET("/auth/me", router.UserHandler.GetAuthUser)                // Check auth and return user
-	apiGroup.POST("/auth/logout", router.UserHandler.Logout)                // Logout the user
-	apiGroup.GET("/users/:id", router.UserHandler.GetUserByID)              // Get user by ID
-	apiGroup.PUT("/users/update/:id", router.UserHandler.UpdateUser)        // Update user by ID
+	apiGroup.GET("/users/:id", router.UserHandler.GetUserByID)       // Get user by ID
+	apiGroup.POST("/users/create", router.UserHandler.CreateUser)    // Create a new user
+	apiGroup.PUT("/users/update/:id", router.UserHandler.UpdateUser) // Update user by ID
 	apiGroup.DELETE("/users/:id", router.UserHandler.DeleteUser)
 
 	// Rental endpoints

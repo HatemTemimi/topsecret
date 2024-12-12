@@ -19,6 +19,8 @@ import (
 	userRepository "server/internal/user/repository"
 	userService "server/internal/user/service"
 
+	authHandler "server/internal/auth/handler"
+
 	"syscall"
 	"time"
 
@@ -50,11 +52,13 @@ func (s *Server) SetupRouter(e *echo.Echo, cfg *config.Config) {
 		Service: placesService,
 	}
 
+	authHandler := authHandler.NewOAuthHandler(userService)
 	// Initialize the Router with both handlers
 	s.router = &Router{
 		PlacesHandler: placesHandler,
 		RentalHandler: rentalHandler,
 		UserHandler:   userHandler,
+		AuthHandler:   authHandler,
 	}
 
 	// Initialize routes
