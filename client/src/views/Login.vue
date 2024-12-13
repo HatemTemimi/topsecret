@@ -3,7 +3,7 @@ import Login from '@/components/users/Login.vue';
 </script>
 
 <template>
-  <v-container fluid width="80vw">
+  <v-container fluid>
     <Login/>
   </v-container>
 </template>

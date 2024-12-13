@@ -118,24 +118,25 @@ const clearForm = () => {
 <template>
   <v-container class="py-5">
     <v-card class="mx-auto" max-width="500">
-      <v-card-title>
-        <v-icon class="mr-3" icon="mdi-account-circle"></v-icon>
-        <span class="text-h5">Login</span>
+      <v-card-title class="text-center">
+        <span class="text-h5">Sign in to Darwin</span>
       </v-card-title>
       <v-divider></v-divider>
-
       <v-card-text>
         <!-- Error Alert -->
         <v-alert
           v-if="error"
           type="error"
-          border="start"
+          border="bottom"
+          class="mb-2"
         >
           {{ error }}
         </v-alert>
-
+        <!-- Google Login Button -->
+        <div id="googleLoginButton" class="mb-4"></div>
+      <v-divider>Or</v-divider>
         <!-- Login Form -->
-        <v-form @submit.prevent="submitForm" fast-fail>
+        <v-form class="mt-4" @submit.prevent="submitForm" fast-fail>
           <!-- Email Field -->
           <v-text-field
             v-model="state.email"
@@ -161,13 +162,12 @@ const clearForm = () => {
           ></v-text-field>
         </v-form>
 
-        <!-- Google Login Button -->
-        <div id="googleLoginButton" class="mt-4"></div>
+        <v-btn class="w-full" color="primary" variant="flat" @click="submitForm">Login</v-btn>
+
       </v-card-text>
 
       <v-card-actions>
-        <v-btn color="primary" @click="submitForm">Login</v-btn>
-        <v-btn outlined color="secondary" @click="clearForm">Clear</v-btn>
+        <!--<v-btn size="small" variant="flat" color="secondary" @click="clearForm">Clear</v-btn>-->
       </v-card-actions>
     </v-card>
 

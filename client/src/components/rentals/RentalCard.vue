@@ -25,7 +25,7 @@ const goToDetails = () => {
 </script>
 
 <template>
-  <v-card class="mx-auto" color="surface" max-width="300">
+  <v-card class="mx-auto" :hover="true" color="surface" max-width="300">
     <!-- Rental Image -->
     <v-img
       height="200px"
