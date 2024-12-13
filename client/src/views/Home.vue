@@ -71,7 +71,9 @@ const filteredRentals = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-row gap-4 w-full h-[90vh] overflow-y-hidden">
+  <div
+    class="flex flex-col lg:flex-row lg:gap-4 gap-24 w-full lg:h-[90vh] h-full md:overflow-y-hidden"
+  >
     <!-- Pass Filtered Rentals to Child Components -->
     <Map :rentals="filteredRentals" :center="currentCenter" />
     <LocationsGrid :rentals="filteredRentals" />

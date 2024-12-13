@@ -16,11 +16,9 @@ const logout = async  () => {
 
 <template>
   <v-app-bar rounded
-  class="px-8"
-  theme="light"
+  color="surface"
   >
     <v-app-bar-title>
-
       <router-link to="/rentals">
         <v-btn>
           Dar/win
@@ -28,22 +26,20 @@ const logout = async  () => {
         </router-link>
     </v-app-bar-title>
 
-    <!-- Navbar for Authenticated Users -->
     <template v-if="authStore.isAuthenticated">
-      <!-- Links available to authenticated users -->
       <router-link to="/rentals/search">
-        <v-btn color="secondary" icon>
+        <v-btn color="success" icon>
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
       </router-link>
 
       <router-link to="/rental/new">
-        <v-btn color="secondary" icon>
+        <v-btn color="success" icon>
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </router-link>
       <router-link  to="/rentals/user">
-        <v-btn color="secondary" icon>
+        <v-btn color="success" icon>
           <v-icon>mdi-arrange-bring-forward</v-icon>
         </v-btn>
       </router-link>

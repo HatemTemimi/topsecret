@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CardTify from "@/components/rentals/RentalCard.vue";
+import RentalCard from "@/components/rentals/RentalCard.vue";
 import type { Rental } from "@/models/rental";
 
 // Define props to accept rentals
@@ -9,7 +9,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <v-card class="mx-auto overflow-auto w-full">
+  <v-card class="bg-white mx-auto border-thin overflow-auto sm:py-4 sm:w-full">
     <v-container fluid>
       <v-row>
         <!-- Iterate over rentals to display each as a card -->
@@ -17,10 +17,11 @@ const props = defineProps<{
           v-for="rental in rentals"
           :key="rental.id"
           cols="12"
-          md="6"
+          sm="2"
+          md="3"
           lg="4"
         >
-          <CardTify
+          <RentalCard
             :rental="rental"
           />
         </v-col>

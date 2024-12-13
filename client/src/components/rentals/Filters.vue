@@ -1,16 +1,10 @@
 <template>
-  <v-container fluid class="py-4" style="max-height: 10vh;">
+    <v-card class="w-full p-4">
     <div class="flex flex-row justify-between items-center">
       <!-- Filters Block -->
       <div name="filters" class="flex flex-row gap-4 items-center">
-        <!-- Location Autocomplete 
-        <div class="min-w-[250px]">
-          <LocationAutocomplete />
-        </div>
--->
-
         <!-- Region Selection -->
-        <div class="min-w-[250px]">
+        <div class="min-w-[200px]">
           <v-select
             v-model="selectedRegion"
             :items="regionOptions"
@@ -70,7 +64,7 @@
         <v-btn size="small" outlined color="secondary" @click="resetFilters">Reset</v-btn>
       </div>
     </div>
-  </v-container>
+</v-card>
 </template>
 
 <script setup lang="ts">

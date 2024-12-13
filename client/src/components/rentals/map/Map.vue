@@ -1,27 +1,31 @@
 <template>
-  <div class="map-container">
-    <Filters></Filters>
+  <v-container
+    class="h-[60vh] lg:h-[100%] lg:w-[60vw] border border-gray-200 "
+  >
+  <Filters></Filters>
+  <v-card class="h-full mt-4">
     <l-map
-        :use-global-leaflet="false"
-        ref="map"
-        v-model:zoom="zoom"
-        :center="currentCenter"
+      :use-global-leaflet="false"
+      ref="map"
+      v-model:zoom="zoom"
+      :center="currentCenter"
     >
       <!-- Tile Layer -->
       <l-tile-layer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          layer-type="base"
-          name="OpenStreetMap"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        layer-type="base"
+        name="OpenStreetMap"
       ></l-tile-layer>
       
       <!-- Markers for Rentals -->
       <div v-for="(item, index) in props.rentals" :key="index">
         <Marker :rental="item" />
       </div>
-
     </l-map>
-  </div>
+  </v-card>
+  </v-container>
 </template>
+
 
 <script setup>
 import "leaflet/dist/leaflet.css";
@@ -59,8 +63,8 @@ const polygonOptions = {
 </script>
 
 <style>
-.map-container {
-  height: 100%;
-  width: 60vw;
+/* Add custom Tailwind utility class */
+.bg-custom-background {
+  background-color: var(--v-theme-background);
 }
 </style>

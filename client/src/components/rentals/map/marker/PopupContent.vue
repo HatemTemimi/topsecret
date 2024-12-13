@@ -12,7 +12,7 @@ const navigateToRental = () => {
 </script>
 
 <template>
-    <v-card theme="light" :title="props.rental.name">
+    <v-card :title="props.rental.name">
       <v-card-item>
         <p>{{ props.rental.fullAddress }}</p>
         <v-chip

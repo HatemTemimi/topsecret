@@ -16,19 +16,16 @@ const router = useRouter(); // Access Vue Router
 // Navigate to the rental details page
 const goToDetails = () => {
   if (props.rental?.id) {
-    router.push(`/rental/${props.rental.id}`);
+    router.push(`/rental/details/${props.rental.id}`);
   } else {
     console.error("Rental ID is missing");
   }
 };
 
-onMounted(()=>{
-  console.log(props.rental.images[0])
-})
 </script>
 
 <template>
-  <v-card class="mx-auto" max-width="344">
+  <v-card class="mx-auto" color="surface" max-width="300">
     <!-- Rental Image -->
     <v-img
       height="200px"
@@ -47,13 +44,9 @@ onMounted(()=>{
     </v-card-subtitle>
 
     <v-card-actions>
-      <!-- Details Button -->
-      <v-btn
-        color="orange-lighten-2"
-        @click="goToDetails"
-      >
+      <v-btn variant="flat" size="small" color="primary-darken-1" @click="goToDetails">
+        <!--<v-icon>mdi-eye-arrow-right</v-icon>-->
         Details
-        <v-icon>mdi-eye-arrow-right</v-icon>
       </v-btn>
 
       <v-spacer></v-spacer>
