@@ -56,7 +56,6 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async googleLogin(idToken: string) {
-      console.log('google login..')
       try {
         const cookies = useCookies(); // Access cookies
 
@@ -88,10 +87,9 @@ export const useAuthStore = defineStore("auth", {
         const cookies = useCookies(); // Access cookies
 
         await axios.post("http://localhost:3001/api/auth/logout", {}, { withCredentials: true });
-
+        cookies.remove("user_info");
         this.isAuthenticated = false;
         this.user = null;
-        cookies.remove("user_info");
         router.push("/user/login");
       } catch (error) {
         console.error("Logout failed:", error);

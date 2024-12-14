@@ -11,12 +11,10 @@
 <script setup>
 import { LMarker, LPopup } from '@vue-leaflet/vue-leaflet'
 import PopupContent from '@/components/rentals/map/marker/PopupContent.vue'
-import { onMounted, computed } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps(['rental'])
 
-
-// Compute latlng from the rental prop
 const latlng = computed(() => [props.rental.lat, props.rental.lng])
 
 </script>

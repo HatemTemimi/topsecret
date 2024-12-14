@@ -1,15 +1,15 @@
 <template>
   <v-container class="py-5">
     <v-card class="mx-auto" max-width="800">
-      <v-card-title>
-        <v-icon class="mr-3" icon="mdi-account-plus"></v-icon>
-        <span class="text-h5">Register</span>
+      <v-card-title class="text-center mb-4">
+        <span class="text-h5">Register to Darwin</span>
       </v-card-title>
-      <v-divider></v-divider>
-
       <v-card-text>
-        <!-- Registration Form -->
-        <v-form @submit.prevent="submitForm" fast-fail>
+
+        <div id="googleLoginButton" class="mb-4"></div>
+          <v-divider thickness="4px" opacity="100">Or</v-divider>
+        <!-- Login Form -->
+        <v-form class="mt-4" @submit.prevent="submitForm" fast-fail>
           <v-text-field
             v-model="state.firstName"
             :error-messages="v$.firstName.$errors.map((e) => e.$message)"
@@ -84,13 +84,17 @@
             dense
             @blur="v$.address.$touch"
           ></v-textarea>
+
+        <!--<v-btn outlined color="secondary" @click="clearForm">Clear</v-btn>-->
+
         </v-form>
+
+        <v-btn class="w-full" color="primary" @click="submitForm">Register</v-btn>
+        <div class="text-center mt-4">
+          already have an account ?<v-btn to="/user/login" variant="plain">Sign in</v-btn>
+        </div>
       </v-card-text>
 
-      <v-card-actions>
-        <v-btn color="primary" @click="submitForm">Register</v-btn>
-        <v-btn outlined color="secondary" @click="clearForm">Clear</v-btn>
-      </v-card-actions>
     </v-card>
 
     <!-- Snackbar for Success or Error Notifications -->
@@ -106,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email, minLength, sameAs } from "@vuelidate/validators";
@@ -208,6 +212,45 @@ const clearForm = () => {
   state.role = "user"; // Reset role to default
   error.value = null;
 };
+
+
+// Google Login handler
+const handleGoogleLogin = async (response: any) => {
+  try {
+    const idToken = response.credential; // Get the ID token from Google
+
+    // Send ID token to the backend for verification and login
+    await authStore.googleLogin(idToken);
+
+    // Show success toast
+    toast.message = "Google Login successful! Redirecting...";
+    toast.color = "success";
+    toast.show = true;
+
+    // Redirect to the dashboard or home page after 2 seconds
+    setTimeout(() => {
+      router.push("/rentals");
+    }, 2000);
+  } catch (err: any) {
+    console.log(err)
+    error.value = "Google Login failed. Please try again.";
+    toast.message = error.value;
+    toast.color = "error";
+    toast.show = true;
+  }
+};
+
+// Initialize Google Login
+onMounted(() => {
+  google.accounts.id.initialize({
+    client_id: "428909233068-npvor85d7nu27i0ulm5tp278h5ajagtf.apps.googleusercontent.com", // Replace with your Google Client ID
+    callback: handleGoogleLogin,
+  });
+  google.accounts.id.renderButton(
+    document.getElementById("googleLoginButton"),
+    { theme: "outline", size: "large" } // Customize the button appearance
+  );
+});
 </script>
 
 <style scoped>

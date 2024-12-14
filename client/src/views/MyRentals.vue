@@ -3,7 +3,7 @@ import UserRentals from '@/components/rentals/UserRentals.vue';
 </script>
 
 <template>
-  <v-container fluid width="80vw">
+  <v-container fluid>
     <UserRentals/>
   </v-container>
 </template>

@@ -106,36 +106,29 @@ onMounted(() => {
   );
 });
 
-// Clear the form
-const clearForm = () => {
-  v$.value.$reset();
-  state.email = "";
-  state.password = "";
-  error.value = null;
-};
 </script>
 
 <template>
   <v-container class="py-5">
     <v-card class="mx-auto" max-width="500">
-      <v-card-title class="text-center">
+      <v-card-title class="text-center mb-4">
         <span class="text-h5">Sign in to Darwin</span>
       </v-card-title>
-      <v-divider></v-divider>
       <v-card-text>
         <!-- Error Alert -->
+        <!-- Google Login Button -->
+        <div id="googleLoginButton" class="mb-4"></div>
+      <v-divider thickness="4px" opacity="100">Or</v-divider>
+        <!-- Login Form -->
+
         <v-alert
           v-if="error"
           type="error"
           border="bottom"
-          class="mb-2"
+          class="my-2"
         >
           {{ error }}
         </v-alert>
-        <!-- Google Login Button -->
-        <div id="googleLoginButton" class="mb-4"></div>
-      <v-divider>Or</v-divider>
-        <!-- Login Form -->
         <v-form class="mt-4" @submit.prevent="submitForm" fast-fail>
           <!-- Email Field -->
           <v-text-field
@@ -163,12 +156,12 @@ const clearForm = () => {
         </v-form>
 
         <v-btn class="w-full" color="primary" variant="flat" @click="submitForm">Login</v-btn>
+        <div class="text-center mt-4">
+          no account ?<v-btn to="/user/register" variant="plain">register</v-btn>
+        </div>
 
       </v-card-text>
 
-      <v-card-actions>
-        <!--<v-btn size="small" variant="flat" color="secondary" @click="clearForm">Clear</v-btn>-->
-      </v-card-actions>
     </v-card>
 
     <!-- Toast Notification -->

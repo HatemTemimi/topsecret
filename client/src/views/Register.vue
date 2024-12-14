@@ -3,7 +3,7 @@ import Register from '@/components/users/Register.vue';
 </script>
 
 <template>
-  <v-container fluid width="80vw">
+  <v-container fluid>
     <Register/>
   </v-container>
 </template>

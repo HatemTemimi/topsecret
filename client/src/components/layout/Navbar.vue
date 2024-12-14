@@ -1,23 +1,17 @@
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/authStore"; // Import the authStore
 import { VBtn, VIcon } from "vuetify/components";
-import { useRouter } from "vue-router";
 
-const authStore = useAuthStore(); // Access Pinia authStore
-const router = useRouter();
+const authStore = useAuthStore(); 
 
-// Logout function
 const logout = async  () => {
-  await router.isReady()
-  authStore.logout(); // Clear auth state
-  router.push("/user/login"); // Redirect to login page
+  authStore.logout(); 
 };
+
 </script>
 
 <template>
-  <v-app-bar rounded
-  color="surface"
-  >
+  <v-app-bar rounded color="surface">
     <v-app-bar-title>
       <router-link to="/rentals">
         <v-btn>
@@ -27,35 +21,56 @@ const logout = async  () => {
     </v-app-bar-title>
 
     <template v-if="authStore.isAuthenticated">
+
+      <!--
       <router-link to="/rentals/search">
         <v-btn color="success" icon>
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
       </router-link>
+-->
 
       <router-link to="/rental/new">
-        <v-btn color="success" icon>
+        <v-btn variant="elevated" class="mr-2"  color="primary">
+          Create your rental
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </router-link>
-      <router-link  to="/rentals/user">
-        <v-btn color="success" icon>
-          <v-icon>mdi-arrange-bring-forward</v-icon>
-        </v-btn>
-      </router-link>
-
       <div class="ml-2">
-      <span>Hello, {{ authStore.user?.firstName }}</span>
 
-      <!-- Logout Button -->
-      <v-btn @click="logout" icon>
-        <v-icon>mdi-logout</v-icon>
-      </v-btn>
+        <v-menu
+      open-on-hover
+    >
+      <template v-slot:activator="{ props }">
+        <v-btn
+          color="success"
+          v-bind="props"
+          class="mr-2"
+        >
+      Hello, {{ authStore.user?.firstName }}
+        </v-btn>
+      </template>
+
+      <v-list>
+        <v-list-item>
+        <router-link  to="/rentals/user">
+          <v-btn>
+            My Rentals
+          </v-btn>
+        </router-link>
+        </v-list-item>
+
+        <v-list-item>
+          <v-btn @click="logout">
+            Logout
+          </v-btn>
+        </v-list-item>
+
+      </v-list>
+    </v-menu>
       </div>
 
     </template>
-
-
 
     <!-- Navbar for Unauthenticated Users -->
     <template v-else>

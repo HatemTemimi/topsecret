@@ -1,6 +1,6 @@
 <template>
   <v-container
-    class="h-[60vh] lg:h-[100%] lg:w-[60vw] border border-gray-200 "
+    class="h-[80vh] lg:h-[100%] lg:w-[60vw] border border-gray-200 "
   >
   <Filters></Filters>
   <v-card class="h-full mt-4">
