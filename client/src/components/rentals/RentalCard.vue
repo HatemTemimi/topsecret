@@ -16,13 +16,16 @@ const props = defineProps({
   withExpand: {
     type: Boolean,
     required: false
+  },
+  withDelete: {
+    type: Boolean,
+    required: false
   }
 });
 
 const show = ref(false);
-const router = useRouter(); // Access Vue Router
+const router = useRouter(); 
 
-// Navigate to the rental details page
 const goToDetails = () => {
   if (props.rental?.id) {
     router.push(`/rental/details/${props.rental.id}`);
@@ -38,7 +41,6 @@ const goToEdit = () => {
     console.error("Rental ID is missing");
   }
 };
-
 
 </script>
 
@@ -68,7 +70,7 @@ const goToEdit = () => {
       <v-btn v-if="withEdit" variant="flat" size="small" color="secondary-darken-1" @click="goToEdit">
         Edit
       </v-btn>
-      <v-btn v-if="withEdit" variant="flat" size="small" color="error" @click="deleteRental(rental.id)">
+      <v-btn v-if="withDelete" variant="flat" size="small" color="error" @click="deleteRental(rental.id)">
         Delete
       </v-btn>
 

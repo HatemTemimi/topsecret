@@ -15,7 +15,6 @@ onMounted(async () => {
   if (authStore.user?.id) {
     try {
       rentals.value = await getRentalsByUserId(authStore.user.id);
-      console.log(rentals)
     } catch (error) {
       console.error("Failed to fetch rentals:", error);
     }
