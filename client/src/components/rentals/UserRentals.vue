@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { getRentalsByUserId } from "@/api/rentals";
-import CardTify from "@/components/rentals/RentalCard.vue";
+import RentalCard from "@/components/rentals/RentalCard.vue";
 import type { Rental } from "@/models/rental";
 import { onMounted, ref } from "vue";
 import { useAuthStore } from "@/stores/authStore"; // Import the Pinia store
+import { deleteRental } from "@/api/rentals";
 
 const rentals = ref<Rental[] | null>(null);
 
@@ -37,8 +38,10 @@ onMounted(async () => {
           md="6"
           lg="4"
         >
-          <CardTify
+          <RentalCard
+            :with-edit="true"
             :rental="rental"
+            :with-delete="true"
           />
         </v-col>
       </v-row>

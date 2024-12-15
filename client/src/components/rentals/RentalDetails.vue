@@ -34,17 +34,34 @@ onMounted(() => {
   }
   fetchRental();
 });
+
 </script>
 
 <template>
-  <v-container class="py-5">
-    <v-card class="mx-auto" max-width="600">
+    <div class="flex flex-col gap-4">
+    <v-card>
+      <v-card-text v-if="rental?.images && rental?.images?.length > 0">
+          <v-row>
+            <v-col cols="12">
+              <v-carousel class="lg: h-full"  hide-delimiters show-arrows="hover" :cycle="true">
+                <v-carousel-item
+                  v-for="(image, index) in rental?.images"
+                  :key="index"
+                >
+                  <v-img rounded :src="image" :alt="'Image ' + index"></v-img>
+                </v-carousel-item>
+              </v-carousel>
+            </v-col>
+          </v-row>
+        </v-card-text>
+    </v-card>
+    <div class="flex flex-col lg:flex-row gap-4">
+    <v-card class="mx-auto w-full lg:w-[50vw]">
       <v-card-title>
-        <v-icon class="mr-3" icon="mdi-home-city-outline"></v-icon>
         <span class="text-h5">{{ rental?.name || 'Loading...' }}</span>
       </v-card-title>
 
-      <v-divider></v-divider>
+      <v-spacer></v-spacer>
 
       <v-card-text>
         <!-- Error Handling -->
@@ -54,10 +71,16 @@ onMounted(() => {
 
         <!-- Rental Details -->
         <template v-else-if="rental">
+          <v-row class="mb-3">
+            <v-col cols="12">
+              Price:
+              <span>{{ rental.price || 'price not available' }} TND</span>
+            </v-col>
+          </v-row>
           <!-- Address -->
           <v-row class="mb-3">
             <v-col cols="12">
-              <v-icon class="mr-2" icon="mdi-map-marker-outline"></v-icon>
+              FullAddress:
               <span>{{ rental.fullAddress || 'Address not available' }}</span>
             </v-col>
           </v-row>
@@ -67,7 +90,7 @@ onMounted(() => {
           <!-- City -->
           <v-row class="mb-3">
             <v-col cols="12">
-              <v-icon class="mr-2" icon="mdi-city"></v-icon>
+              City:
               <span>{{ rental.city || 'City not available' }}</span>
             </v-col>
           </v-row>
@@ -77,7 +100,7 @@ onMounted(() => {
           <!-- Country -->
           <v-row class="mb-3">
             <v-col cols="12">
-              <v-icon class="mr-2" icon="mdi-earth"></v-icon>
+              Country:
               <span>{{ rental.country || 'Country not available' }}</span>
             </v-col>
           </v-row>
@@ -87,7 +110,7 @@ onMounted(() => {
           <!-- Street -->
           <v-row class="mb-3">
             <v-col cols="12">
-              <v-icon class="mr-2" icon="mdi-road-variant"></v-icon>
+              Street Number:
               <span>{{ rental.street || 'Street not available' }}</span>
             </v-col>
           </v-row>
@@ -97,7 +120,7 @@ onMounted(() => {
           <!-- Status -->
           <v-row class="mb-3">
             <v-col cols="12">
-              <v-icon class="mr-2" icon="mdi-check-circle-outline"></v-icon>
+              Status:
               <span>{{ rental.status ? 'Available' : 'Unavailable' }}</span>
             </v-col>
           </v-row>
@@ -107,7 +130,7 @@ onMounted(() => {
           <!-- Agreement -->
           <v-row class="mb-3">
             <v-col cols="12">
-              <v-icon class="mr-2" icon="mdi-handshake-outline"></v-icon>
+              Agreed to Terms:
               <span>{{ rental.agree ? 'Agreed to terms' : 'Not agreed' }}</span>
             </v-col>
           </v-row>
@@ -124,21 +147,6 @@ onMounted(() => {
       <v-divider></v-divider>
 
       <!-- Images Carousel -->
-      <v-card-text v-if="rental?.images && rental?.images?.length > 0">
-        <v-row>
-          <v-col cols="12">
-            <h4>Images</h4>
-            <v-carousel height="200" show-arrows>
-              <v-carousel-item
-                v-for="(image, index) in rental?.images"
-                :key="index"
-              >
-                <v-img :src="image" :alt="'Image ' + index"></v-img>
-              </v-carousel-item>
-            </v-carousel>
-          </v-col>
-        </v-row>
-      </v-card-text>
 
       <v-card-actions>
         <v-btn variant="outlined" color="primary" @click="router.back()">
@@ -147,7 +155,16 @@ onMounted(() => {
         </v-btn>
       </v-card-actions>
     </v-card>
-  </v-container>
+    <v-card class="lg:w-[50vw] sm:w-full">
+      <v-card-title>
+      Decription
+      </v-card-title>
+      <v-card-text>
+        {{ rental?.description }}
+      </v-card-text>
+    </v-card>
+</div>
+</div>
 </template>
 
 <style scoped>

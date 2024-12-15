@@ -38,3 +38,8 @@ export async function updateRental(id, data){
   const response = await axios.put(`http://localhost:3001/api/rental/${id}`, data);
   return response
 }
+
+export async function deleteRental(id){
+  const response = await axios.delete(`http://localhost:3001/api/rental/${id}`);
+  return response
+}

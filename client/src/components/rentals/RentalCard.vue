@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import {ref, defineProps, onMounted} from "vue";
+import { deleteRental } from "@/api/rentals";
+import {ref, defineProps } from "vue";
 import { useRouter } from "vue-router";
 
 // Props
@@ -8,6 +9,14 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  withEdit: {
+    type: Boolean,
+    required: false
+  },
+  withExpand: {
+    type: Boolean,
+    required: false
+  }
 });
 
 const show = ref(false);
@@ -21,6 +30,15 @@ const goToDetails = () => {
     console.error("Rental ID is missing");
   }
 };
+
+const goToEdit = () => {
+  if (props.rental?.id) {
+    router.push(`/rental/${props.rental.id}`);
+  } else {
+    console.error("Rental ID is missing");
+  }
+};
+
 
 </script>
 
@@ -45,14 +63,19 @@ const goToDetails = () => {
 
     <v-card-actions>
       <v-btn variant="flat" size="small" color="primary-darken-1" @click="goToDetails">
-        <!--<v-icon>mdi-eye-arrow-right</v-icon>-->
         Details
+      </v-btn>
+      <v-btn v-if="withEdit" variant="flat" size="small" color="secondary-darken-1" @click="goToEdit">
+        Edit
+      </v-btn>
+      <v-btn v-if="withEdit" variant="flat" size="small" color="error" @click="deleteRental(rental.id)">
+        Delete
       </v-btn>
 
       <v-spacer></v-spacer>
 
       <!-- Expand Button -->
-      <v-btn
+      <v-btn v-if="withExpand"
         :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
         @click="show = !show"
       ></v-btn>

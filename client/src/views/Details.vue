@@ -3,7 +3,7 @@ import RentalDetails  from "@/components/rentals/RentalDetails.vue";
 </script>
 
 <template>
-  <v-container fluid width="50vw">
+  <v-container fluid>
     <RentalDetails/>
   </v-container>
 </template>

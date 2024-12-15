@@ -29,8 +29,8 @@
 
 <script setup>
 import "leaflet/dist/leaflet.css";
-import { LMap, LTileLayer, LPolygon } from '@vue-leaflet/vue-leaflet';
-import { ref, computed } from "vue";
+import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
+import { ref, computed, onMounted } from "vue";
 import Marker from '@/components/rentals/map/marker/Marker.vue';
 import Filters from '@/components/rentals/Filters.vue';
 
@@ -45,6 +45,10 @@ if (props.center?.lat && props.center?.lng) {
 } else {
   currentCenter.value = [36.8065, 10.181667]; // Default center
 }
+
+onMounted(()=>{
+  console.log(props.rentals)
+})
 
 // Polygon coordinates (example around the center point)
 const polygonCoordinates = computed(() => [
@@ -61,10 +65,3 @@ const polygonOptions = {
   fillOpacity: 0.5, // Fill transparency
 };
 </script>
-
-<style>
-/* Add custom Tailwind utility class */
-.bg-custom-background {
-  background-color: var(--v-theme-background);
-}
-</style>

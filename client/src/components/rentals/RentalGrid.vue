@@ -22,7 +22,8 @@ const props = defineProps<{
           lg="4"
         >
           <RentalCard
-            :rental="rental"
+          :with-expand="true"
+          :rental="rental"
           />
         </v-col>
       </v-row>
