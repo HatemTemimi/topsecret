@@ -70,13 +70,22 @@ func randomLatLngInTunis() (string, string) {
 	return fmt.Sprintf("%.5f", lat), fmt.Sprintf("%.5f", lng)
 }
 
+func randomStanding() types.Standing {
+	standingArr := []types.Standing{
+		types.Economy,
+		types.Standard,
+		types.Luxury,
+	}
+	return standingArr[rand.Intn(len(standingArr))]
+}
+
 func (db *DB) InitMockRentals() error {
 	// Seed the faker to ensure random data
 	rand.Seed(time.Now().UnixNano())
 	gofakeit.Seed(time.Now().UnixNano())
 
 	var rentals []types.Rental
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 300; i++ {
 		var lat, lng = randomLatLngInTunis()
 
 		rental := types.Rental{
@@ -112,9 +121,9 @@ func (db *DB) InitMockRentals() error {
 				PartiesAllowed: gofakeit.Bool(),
 				SmokingAllowed: gofakeit.Bool(),
 			},
-			Status:    types.Pending,
+			Status:    types.Agreed,
 			Currency:  "TND",
-			Standing:  types.Standard,
+			Standing:  randomStanding(),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 			CreatedBy: primitive.NewObjectID(), // Mock user ID
