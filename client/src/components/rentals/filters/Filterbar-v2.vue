@@ -1,14 +1,13 @@
 <template>
-    <v-card class="w-full p-4">
-    <div class="flex flex-row justify-between items-center">
+    <div class="hidden md:block mt-2 p-4 border h-24 border-gray-200 rounded-lg">
       <!-- Filters Block -->
       <div name="filters" class="flex flex-row gap-4 items-center">
         <!-- Region Selection -->
-        <div class="min-w-[200px]">
+        <div class="sm:hidden md:block md:w-48 ">
           <v-select
             v-model="selectedRegion"
             :items="regionOptions"
-            label="Select Region"
+            label="region"
             outlined
             dense
             clearable
@@ -17,11 +16,11 @@
         </div>
 
         <!-- Bedrooms -->
-        <div class="min-w-[150px]">
+        <div class="md:w-48">
           <v-select
             v-model="filters.bedrooms"
             :items="bedroomOptions"
-            label="Bedrooms"
+            label="bedrooms"
             outlined
             dense
             clearable
@@ -30,11 +29,11 @@
         </div>
 
         <!-- Bathrooms -->
-        <div class="min-w-[150px]">
+        <div class="md:w-48">
           <v-select
             v-model="filters.bathrooms"
             :items="bathroomOptions"
-            label="Bathrooms"
+            label="bathrooms"
             outlined
             dense
             clearable
@@ -43,11 +42,11 @@
         </div>
 
         <!-- Availability -->
-        <div class="min-w-[150px]">
+        <div class="md:w-48">
           <v-select
             v-model="filters.available"
             :items="availabilityOptions"
-            label="Availability"
+            label="availability"
             item-title="text"
             item-value="value"
             outlined
@@ -56,20 +55,81 @@
             @change="updateFiltersState"
           ></v-select>
         </div>
+
+        <div class="md:w-48">
+          <v-select
+            v-model="filters.available"
+            :items="availabilityOptions"
+            label="type"
+            item-title="text"
+            item-value="value"
+            outlined
+            dense
+            clearable
+            @change="updateFiltersState"
+          ></v-select>
+        </div>
+        <div class="md:w-48">
+          <v-select
+            v-model="filters.available"
+            :items="availabilityOptions"
+            label="standing"
+            item-title="text"
+            item-value="value"
+            outlined
+            dense
+            clearable
+            @change="updateFiltersState"
+          ></v-select>
+        </div>
+        <div class="md:w-48">
+          <v-select
+            v-model="filters.available"
+            :items="availabilityOptions"
+            label="price"
+            item-title="text"
+            item-value="value"
+            outlined
+            dense
+            clearable
+            @change="updateFiltersState"
+          ></v-select>
+        </div>
+        <div class="md:w-48">
+          <v-select
+            v-model="filters.available"
+            :items="availabilityOptions"
+            label="rules"
+            item-title="text"
+            item-value="value"
+            outlined
+            dense
+            clearable
+            @change="updateFiltersState"
+          ></v-select>
+        </div>
+        <div class="md:w-48">
+          <v-select
+            v-model="filters.available"
+            :items="availabilityOptions"
+            label="amenities"
+            item-title="text"
+            item-value="value"
+            outlined
+            dense
+            clearable
+            @change="updateFiltersState"
+          ></v-select>
+        </div>
+        <v-btn class="w-32" size="small" variant="elevated" color="secondary" @click="resetFilters">Reset</v-btn>
       </div>
 
       <!-- Filter & Reset Buttons -->
-      <div name="buttons" class="flex flex-row gap-2 ml-4">
-        <v-btn size="small" color="primary" @click="applyFilters">Apply Filters</v-btn>
-        <v-btn size="small" outlined color="secondary" @click="resetFilters">Reset</v-btn>
-      </div>
     </div>
-</v-card>
 </template>
 
 <script setup lang="ts">
 import { inject, ref } from "vue";
-import LocationAutocomplete from "./map/LocationAutocomplete.vue";
 
 // Inject shared state and update method from the parent
 const filters = inject("filters");

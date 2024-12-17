@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/authStore"; // Import the authStore
+import { ref } from "vue";
 import { VBtn, VIcon } from "vuetify/components";
 
 const authStore = useAuthStore(); 
@@ -7,6 +8,8 @@ const authStore = useAuthStore();
 const logout = async  () => {
   authStore.logout(); 
 };
+
+const drawer = ref(null)
 
 </script>
 
@@ -22,16 +25,12 @@ const logout = async  () => {
 
     <template v-if="authStore.isAuthenticated">
 
-      <!--
-      <router-link to="/rentals/search">
-        <v-btn color="success" icon>
+      <v-btn @click.stop="drawer = !drawer" class="sm:block" color="success" icon>
           <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-      </router-link>
--->
+      </v-btn>
 
       <router-link to="/rental/new">
-        <v-btn variant="elevated" class="mr-2"  color="primary">
+        <v-btn variant="elevated" class="mr-2 hidden md:block"  color="primary">
           Create your rental
           <v-icon>mdi-plus</v-icon>
         </v-btn>
@@ -87,6 +86,23 @@ const logout = async  () => {
       </router-link>
     </template>
   </v-app-bar>
+       <v-navigation-drawer
+        v-model="drawer"
+        temporary
+      >
+        <v-list-item
+          prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
+          title="John Leider"
+        ></v-list-item>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav>
+          <v-list-item prepend-icon="mdi-view-dashboard" title="Home" value="home"></v-list-item>
+          <v-list-item prepend-icon="mdi-forum" title="About" value="about"></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
 </template>
 
 <style scoped>

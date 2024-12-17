@@ -9,7 +9,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <v-card class="bg-white mx-auto border-thin overflow-auto sm:py-4 sm:w-full">
+  <v-card class="bg-white md:w-[50vw] mx-auto border-thin overflow-auto sm:py-4 sm:w-full rounded-lg">
     <v-container fluid>
       <v-row>
         <!-- Iterate over rentals to display each as a card -->

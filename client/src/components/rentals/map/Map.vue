@@ -1,9 +1,8 @@
 <template>
   <v-container
-    class="h-[80vh] lg:h-[100%] lg:w-[60vw] border border-gray-200 "
+    class="h-[90vh] lg:h-[100%] lg:w-full border border-gray-200 rounded-lg"
   >
-  <Filters></Filters>
-  <v-card class="h-full mt-4">
+  <v-card class="h-full">
     <l-map
       :use-global-leaflet="false"
       ref="map"
@@ -32,7 +31,7 @@ import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { ref } from "vue";
 import Marker from '@/components/rentals/map/marker/Marker.vue';
-import Filters from '@/components/rentals/Filters.vue';
+import Filters from '@/components/rentals/filters/Filterbar.vue';
 
 // Define props and refs
 const props = defineProps(['center', 'rentals']);
