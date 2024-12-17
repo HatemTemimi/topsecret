@@ -3,7 +3,6 @@ import { deleteRental } from "@/api/rentals";
 import {ref, defineProps } from "vue";
 import { useRouter } from "vue-router";
 
-// Props
 const props = defineProps({
   rental: {
     type: Object,
@@ -55,7 +54,7 @@ const goToEdit = () => {
      <template v-slot:placeholder>
       <div class="d-flex align-center justify-center fill-height">
         <v-progress-circular
-          color="primary"
+          color="success"
           indeterminate
         ></v-progress-circular>
       </div>

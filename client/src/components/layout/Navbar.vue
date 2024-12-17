@@ -90,10 +90,6 @@ const drawer = ref(null)
         v-model="drawer"
         temporary
       >
-        <v-list-item
-          prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
-          title="John Leider"
-        ></v-list-item>
 
         <v-divider></v-divider>
 
