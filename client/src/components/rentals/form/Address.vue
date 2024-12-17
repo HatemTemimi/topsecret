@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import {VAutocomplete} from 'vuetify/components'
-import {inject, ref, watch} from "vue";
+import {inject, onMounted, ref, watch} from "vue";
 import {getPlaceDetails, getPlacesGoogle} from "@/api/getPlaces";
 import _ from 'lodash'
 import AddressLocator from "@/components/rentals/form/AddressLocator.vue";
-import {provide} from 'vue'
 
 const model = ref(null)
 const results = ref([])
 const loading = ref(false)
-//const marker = ref([36.8065, 10.181667])
 const {marker, updateMarker} = inject('location');
+
 
 // Debounced search function using watch
 let timeoutId: number | null = null;
@@ -32,6 +31,7 @@ const validateLocation = async (model) => {
   tmp.push(details.geometry.location.lat, details.geometry.location.lng)
   marker.value = tmp
 }
+
 </script>
 
 <template>

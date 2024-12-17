@@ -1,7 +1,7 @@
 <template>
   <div>
     <l-marker :lat-lng="latlng">
-      <l-popup>
+      <l-popup class="p-0 m-0 min-w-44">
         <PopupContent :rental="props.rental"/>
       </l-popup :rental="props.rental">
     </l-marker>
@@ -15,6 +15,6 @@ import { computed } from 'vue';
 
 const props = defineProps(['rental'])
 
-const latlng = computed(() => [props.rental.lat, props.rental.lng])
+const latlng = computed(() => [props.rental.geometry.lat, props.rental.geometry.lng])
 
 </script>

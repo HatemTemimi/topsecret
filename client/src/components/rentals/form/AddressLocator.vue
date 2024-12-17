@@ -31,7 +31,7 @@ import { getAddress } from "@/api/getAddress.ts";
 import { getAddressFromLatLng } from "@/api/getPlaces";
 
 const { marker, updateMarker } = inject('location');
-const updateInfo = inject('updateInfo'); // Inject updateInfo to update the state in the main component
+const updateInfo = inject('updateInfo'); 
 
 const currentCenter = ref(marker);
 

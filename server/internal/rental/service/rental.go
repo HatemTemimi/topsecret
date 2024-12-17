@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"server/internal/rental/repository"
-	"server/internal/rental/types"
+	types "server/internal/rental/types"
 )
 
 type RentalService interface {
@@ -26,12 +27,37 @@ func NewRentalService(repo repository.RentalRepository) RentalService {
 
 // AddRental validates and adds a new rental
 func (s *rentalService) AddRental(ctx context.Context, rental types.Rental) error {
+	// Validate mandatory fields
+
+	fmt.Println(rental)
+
 	if rental.Name == "" {
 		return errors.New("rental name cannot be empty")
 	}
-	if rental.StreetNumber == "" || rental.Street == "" || rental.City == "" || rental.Country == "" {
+	if rental.Address.StreetNumber == "" || rental.Address.Street == "" || rental.Address.City == "" || rental.Address.Country == "" {
 		return errors.New("address fields cannot be empty")
 	}
+	if rental.Geometry.Lat == "" || rental.Geometry.Lng == "" {
+		return errors.New("geometry fields (latitude and longitude) cannot be empty")
+	}
+	if !rental.Amenities.AirConditioning || !rental.Amenities.Heating {
+		return errors.New("air conditioning and heating are required amenities")
+	}
+
+	// Apply default values
+	if rental.Status == "" {
+		rental.Status = types.Pending
+	}
+	if rental.Currency == "" {
+		rental.Currency = "TND"
+	}
+	if !rental.Available {
+		rental.Available = true
+	}
+	if rental.Standing == "" {
+		rental.Standing = types.Standard
+	}
+
 	return s.repo.AddRental(ctx, rental)
 }
 
@@ -53,21 +79,42 @@ func (s *rentalService) GetRentalsByUserID(ctx context.Context, userID string) (
 	if userID == "" {
 		return nil, errors.New("userID cannot be empty")
 	}
-
 	return s.repo.GetRentalsByUserID(ctx, userID)
 }
 
 // UpdateRental updates an existing rental
 func (s *rentalService) UpdateRental(ctx context.Context, id string, updatedData types.Rental) error {
+	// Validate mandatory fields
 	if id == "" {
 		return errors.New("id cannot be empty")
 	}
 	if updatedData.Name == "" {
 		return errors.New("rental name cannot be empty")
 	}
-	if updatedData.StreetNumber == "" || updatedData.Street == "" || updatedData.City == "" || updatedData.Country == "" {
+	if updatedData.Address.StreetNumber == "" || updatedData.Address.Street == "" || updatedData.Address.City == "" || updatedData.Address.Country == "" {
 		return errors.New("address fields cannot be empty")
 	}
+	if updatedData.Geometry.Lat == "" || updatedData.Geometry.Lng == "" {
+		return errors.New("geometry fields (latitude and longitude) cannot be empty")
+	}
+	if !updatedData.Amenities.AirConditioning || !updatedData.Amenities.Heating {
+		return errors.New("air conditioning and heating are required amenities")
+	}
+
+	// Apply default values if not set
+	if updatedData.Status == "" {
+		updatedData.Status = types.Pending
+	}
+	if updatedData.Currency == "" {
+		updatedData.Currency = "TND"
+	}
+	if !updatedData.Available {
+		updatedData.Available = true
+	}
+	if updatedData.Standing == "" {
+		updatedData.Standing = types.Standard
+	}
+
 	return s.repo.UpdateRental(ctx, id, updatedData)
 }
 

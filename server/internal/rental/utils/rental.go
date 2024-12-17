@@ -9,7 +9,7 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"server/internal/rental/types"
+	types "server/internal/rental/types"
 	"strings"
 	"sync"
 
@@ -65,8 +65,12 @@ func MapImagePathsToURLs(c echo.Context, imagePaths []string) []string {
 	baseURL := fmt.Sprintf("http://%s/", c.Request().Host) // Base URL for assets
 	var urls []string
 	for _, imagePath := range imagePaths {
-		url := fmt.Sprintf("%s%s", baseURL, strings.TrimPrefix(imagePath, "../"))
-		urls = append(urls, url)
+		if !strings.Contains(imagePath, "https://") {
+			url := fmt.Sprintf("%s%s", baseURL, strings.TrimPrefix(imagePath, "../"))
+			urls = append(urls, url)
+		} else {
+			urls = append(urls, imagePath)
+		}
 	}
 	return urls
 }

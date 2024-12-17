@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"server/internal/rental/types"
+	types "server/internal/rental/types"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -38,10 +38,23 @@ func (r *rentalRepository) AddRental(ctx context.Context, rental types.Rental) e
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	// Ensure the FullAddress field is populated
-	if rental.FullAddress == "" {
-		rental.FullAddress = rental.StreetNumber + " " + rental.Street + ", " + rental.City + ", " + rental.Country
+	// Set default values
+	if rental.Status == "" {
+		rental.Status = types.Pending
 	}
+	if rental.Currency == "" {
+		rental.Currency = "TND"
+	}
+	if !rental.Available {
+		rental.Available = true
+	}
+	if rental.Standing == "" {
+		rental.Standing = types.Standard
+	}
+
+	// Construct FullAddress
+	rental.Address.FullAddress = rental.Address.StreetNumber + " " + rental.Address.Street + ", " +
+		rental.Address.City + ", " + rental.Address.Country
 
 	_, err := r.collection.InsertOne(ctx, rental)
 	if err != nil {
@@ -91,7 +104,7 @@ func (r *rentalRepository) GetRentalByID(ctx context.Context, id string) (*types
 	err = r.collection.FindOne(ctx, bson.M{"_id": objectID}).Decode(&rental)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, nil // No rental found with the given ID
+			return nil, nil
 		}
 		log.Printf("Error finding rental: %v", err)
 		return nil, err
@@ -105,17 +118,14 @@ func (r *rentalRepository) GetRentalsByUserID(ctx context.Context, userID string
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	// Convert userID to ObjectID
 	objectID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		log.Printf("Invalid UserID format: %v", err)
 		return nil, errors.New("invalid UserID format")
 	}
 
-	// Query to find rentals by createdBy
 	filter := bson.M{"createdBy": objectID}
 
-	// Execute the query
 	cursor, err := r.collection.Find(ctx, filter)
 	if err != nil {
 		log.Printf("Error finding rentals by userID: %v", err)
@@ -123,7 +133,6 @@ func (r *rentalRepository) GetRentalsByUserID(ctx context.Context, userID string
 	}
 	defer cursor.Close(ctx)
 
-	// Decode rentals into a slice
 	var rentals []types.Rental
 	if err = cursor.All(ctx, &rentals); err != nil {
 		log.Printf("Error decoding rentals: %v", err)
@@ -144,14 +153,12 @@ func (r *rentalRepository) UpdateRental(ctx context.Context, id string, updatedD
 		return errors.New("invalid ID format")
 	}
 
-	// Ensure the FullAddress field is updated if street-related fields change
-	if updatedData.FullAddress == "" {
-		updatedData.FullAddress = updatedData.StreetNumber + " " + updatedData.Street + ", " + updatedData.City + ", " + updatedData.Country
+	if updatedData.Address.FullAddress == "" {
+		updatedData.Address.FullAddress = updatedData.Address.StreetNumber + " " + updatedData.Address.Street + ", " +
+			updatedData.Address.City + ", " + updatedData.Address.Country
 	}
 
-	update := bson.M{
-		"$set": updatedData,
-	}
+	update := bson.M{"$set": updatedData}
 
 	result, err := r.collection.UpdateOne(ctx, bson.M{"_id": objectID}, update)
 	if err != nil {

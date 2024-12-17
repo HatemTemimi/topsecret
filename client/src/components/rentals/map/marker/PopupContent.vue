@@ -12,24 +12,34 @@ const navigateToRental = () => {
 </script>
 
 <template>
-    <v-card :title="props.rental.name">
-      <v-card-item>
-        <p>{{ props.rental.fullAddress }}</p>
+    <v-card :elevation="0" color="white" class="w-full" :title="props.rental.name">
+    <v-img
+      height="100px"
+      :src="rental.images?.[0]"
+      cover
+    ></v-img>
+    <div class="flex flex-row gap-1">
         <v-chip
-          class="ma-2"
-          color="pink"
+          class="mt-2"
+          color="success"
           label
+          size="small"
         >
-          <v-icon icon="mdi-label" start></v-icon>
-          some tag
+        <v-icon icon="mdi-currency-usd" start></v-icon>
+        {{ props.rental.price }} TND
         </v-chip>
-      </v-card-item>
+        <v-chip
+          class="mt-2"
+          color="success"
+          label
+          size="small"
+        >
+        <v-icon icon="mdi-currency-usd" start></v-icon>
+        {{ props.rental.bedrooms }} Bedrooms
+        </v-chip>
+    </div>
       <v-card-actions>
-        <v-btn size="small" variant="outlined">
-          Edit
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn size="small" variant="outlined" @click="navigateToRental">
+        <v-btn class="w-full" size="small" variant="elevated" color="secondary" @click="navigateToRental">
         View
         <v-icon>mdi-arrow-right</v-icon>
       </v-btn>

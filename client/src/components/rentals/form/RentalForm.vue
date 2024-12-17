@@ -316,9 +316,6 @@ for (const key in state) {
   }
 }
 
-
-
-
   try {
     if (!isEditMode.value) {
       console.log(formData);

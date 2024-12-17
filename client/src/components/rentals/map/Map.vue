@@ -30,7 +30,7 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
-import { ref, computed, onMounted } from "vue";
+import { ref } from "vue";
 import Marker from '@/components/rentals/map/marker/Marker.vue';
 import Filters from '@/components/rentals/Filters.vue';
 
@@ -46,22 +46,4 @@ if (props.center?.lat && props.center?.lng) {
   currentCenter.value = [36.8065, 10.181667]; // Default center
 }
 
-onMounted(()=>{
-  console.log(props.rentals)
-})
-
-// Polygon coordinates (example around the center point)
-const polygonCoordinates = computed(() => [
-  [currentCenter.value[0] + 0.01, currentCenter.value[1] - 0.01],
-  [currentCenter.value[0] + 0.01, currentCenter.value[1] + 0.01],
-  [currentCenter.value[0] - 0.01, currentCenter.value[1] + 0.01],
-  [currentCenter.value[0] - 0.01, currentCenter.value[1] - 0.01],
-]);
-
-// Polygon style options
-const polygonOptions = {
-  color: 'red', // Border color
-  fillColor: 'red', // Fill color
-  fillOpacity: 0.5, // Fill transparency
-};
 </script>

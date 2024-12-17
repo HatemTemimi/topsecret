@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"server/config"
-	"server/internal/rental/types"
+	types "server/internal/rental/types"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"golang.org/x/crypto/bcrypt"
@@ -78,25 +78,47 @@ func (db *DB) InitMockRentals() error {
 	var rentals []types.Rental
 	for i := 0; i < 20; i++ {
 		var lat, lng = randomLatLngInTunis()
+
 		rental := types.Rental{
-			Name:         gofakeit.Company(),
-			StreetNumber: gofakeit.StreetNumber(),
-			Street:       gofakeit.StreetName(),
-			City:         gofakeit.City(),
-			Country:      gofakeit.Country(),
-			FullAddress:  gofakeit.Address().Address,
-			Lat:          lat,
-			Lng:          lng,
-			Price:        int64(gofakeit.Number(500, 2000)),
-			Bedrooms:     int64(gofakeit.Number(1, 5)),
-			Bathrooms:    int64(gofakeit.Number(1, 3)),
-			AreaSize:     int64(gofakeit.Number(50, 150)),
-			Available:    gofakeit.Bool(),
-			Tags:         strings.Split(gofakeit.Word(), ""),
-			Description:  gofakeit.Sentence(10),
-			Images:       []string{"https://cdn.vuetifyjs.com/images/cards/hotel.jpg"},
-			CreatedAt:    time.Now(),
-			UpdatedAt:    time.Now(),
+			ID:   primitive.NewObjectID(),
+			Name: gofakeit.Company(),
+			Address: types.Address{
+				StreetNumber: gofakeit.StreetNumber(),
+				Street:       gofakeit.StreetName(),
+				City:         "Tunis", // Fixed to Tunisia
+				Country:      "Tunisia",
+				FullAddress:  gofakeit.Address().Address,
+			},
+			Geometry: types.Geometry{
+				Lat: lat,
+				Lng: lng,
+			},
+			Price:       int64(gofakeit.Number(500, 2000)),
+			Bedrooms:    int64(gofakeit.Number(1, 5)),
+			Bathrooms:   int64(gofakeit.Number(1, 3)),
+			AreaSize:    int64(gofakeit.Number(50, 150)),
+			Available:   gofakeit.Bool(),
+			Tags:        strings.Split(gofakeit.Word(), ""),
+			Description: gofakeit.Sentence(10),
+			Images:      []string{"https://cdn.vuetifyjs.com/images/cards/hotel.jpg"},
+			Amenities: types.Amenities{
+				AirConditioning: gofakeit.Bool(),
+				Heating:         gofakeit.Bool(),
+				Refrigerator:    gofakeit.Bool(),
+				Parking:         gofakeit.Bool(),
+			},
+			Rules: types.Rules{
+				PetsAllowed:    gofakeit.Bool(),
+				PartiesAllowed: gofakeit.Bool(),
+				SmokingAllowed: gofakeit.Bool(),
+			},
+			Status:    types.Pending,
+			Currency:  "TND",
+			Standing:  types.Standard,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+			CreatedBy: primitive.NewObjectID(), // Mock user ID
+			UpdatedBy: primitive.NewObjectID(), // Mock user ID
 		}
 		rentals = append(rentals, rental)
 	}

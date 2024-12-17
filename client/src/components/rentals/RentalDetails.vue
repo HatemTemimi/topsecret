@@ -3,10 +3,12 @@ import { useRoute, useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import type { Rental } from '@/models/rental';
 import { getRentalById } from '@/api/rentals';
+import "leaflet/dist/leaflet.css";
+import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
+import Marker from '@/components/rentals/map/marker/Marker.vue';
 
 // Access the route parameters to fetch the rental ID
 const route = useRoute();
-const router = useRouter();
 const rentalId = route.params.id;
 
 // Reactive variable for rental details
@@ -15,23 +17,40 @@ const rental = ref<Rental | null>(null);
 // Reactive variable for error handling
 const error = ref<string | null>(null);
 
+const loading = ref(true)
+
+
+const currentCenter = ref([36.8065, 10.181667])
+const zoom = ref(12)
+
 // Fetch rental details from the API
 const fetchRental = async () => {
   try {
-    rental.value = await getRentalById(rentalId);
+    loading.value = true; // Start loading
+    const fetchedRental = await getRentalById(rentalId);
+    if (fetchedRental?.geometry) {
+      currentCenter.value = [
+        parseFloat(fetchedRental.geometry.lat),
+        parseFloat(fetchedRental.geometry.lng),
+      ];
+    }
+    rental.value = fetchedRental;
   } catch (err) {
     console.error('Failed to fetch rental:', err);
     error.value = 'Failed to fetch rental details.';
+  } finally {
+    loading.value = false; // Stop loading
   }
 };
 
+
 // Lifecycle hook to fetch data on component mount
-onMounted(() => {
+onMounted(async () => {
   if (!rentalId) {
     error.value = 'Invalid rental ID.';
     return;
   }
-  fetchRental();
+  await fetchRental();
 });
 
 </script>
@@ -60,7 +79,7 @@ onMounted(() => {
       <v-card-title>
         <span class="text-h5">{{ rental?.name || 'Loading...' }}</span>
       </v-card-title>
-      <v-card-subtitle>{{ rental?.city }}, {{ rental?.country }}</v-card-subtitle>
+      <v-card-subtitle>{{ rental?.address.city }}, {{ rental?.address.country }}</v-card-subtitle>
 
       <v-spacer></v-spacer>
 
@@ -106,16 +125,6 @@ onMounted(() => {
 
       <v-divider></v-divider>
 
-      <!--
-
-      <v-card-actions>
-        <v-btn variant="outlined" color="primary" @click="router.back()">
-          <v-icon left>mdi-arrow-left</v-icon>
-          Go Back
-        </v-btn>
-      </v-card-actions>
-
-      -->
     </v-card>
     <v-card class="lg:w-[50vw] sm:w-full">
       <v-card-title>
@@ -128,9 +137,27 @@ onMounted(() => {
       </v-card-text>
     </v-card>
 </div>
-<v-card class="w-full">
-  <v-card-title>map and location</v-card-title>
-
+<v-card class="w-full h-96">
+    <l-map
+      v-if="rental"
+      :use-global-leaflet="false"
+      ref="map"
+      v-model:zoom="zoom"
+      :center="currentCenter"
+    >
+      <!-- Tile Layer -->
+      <l-tile-layer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        layer-type="base"
+        name="OpenStreetMap"
+      ></l-tile-layer>
+      
+      <!-- Markers for Rentals -->
+      <Marker :rental="rental" />
+    </l-map>
+    <div v-else>
+      loading..
+    </div>
 </v-card>
 </div>
 </div>
