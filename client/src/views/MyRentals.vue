@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UserRentals from '@/components/rentals/UserRentals.vue';
+import UserRentals from '@/components/rentals/grid/UserRentals.vue';
 </script>
 
 <template>

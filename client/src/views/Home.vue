@@ -2,7 +2,7 @@
 import Map from "@/components/rentals/map/Map.vue";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, watch, computed, provide } from "vue";
-import LocationsGrid from "@/components/rentals/RentalGrid.vue";
+import LocationsGrid from "@/components/rentals/grid/RentalGrid.vue";
 import FilterBar from "@/components/rentals/filters/Filterbar-v2.vue";
 import { getRentals } from "@/api/rentals";
 
@@ -137,8 +137,11 @@ const filteredRentals = computed(() => {
     <div
       class="flex flex-col lg:flex-row lg:gap-4 gap-24 w-full lg:h-[80vh] h-full md:overflow-y-hidden mt-4"
     >
-      <!-- Pass Filtered Rentals to Child Components -->
-      <Map :rentals="filteredRentals" :center="currentCenter" />
+      <v-container
+        class="h-[90vh] lg:h-[100%] lg:w-full border border-gray-200 rounded-lg"
+      >
+      <Map :rentals="filteredRentals"/>
+      </v-container>
       <LocationsGrid :rentals="filteredRentals" />
     </div>
   </div>

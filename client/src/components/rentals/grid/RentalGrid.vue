@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RentalCard from "@/components/rentals/RentalCard.vue";
+import RentalCard from "@/components/rentals/grid/RentalCard.vue";
 import type { Rental } from "@/models/rental";
 import { inject } from "vue";
 

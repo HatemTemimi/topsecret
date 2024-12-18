@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Geosearch from "@/components/rentals/map/Geosearch.vue";
+import Geosearch from "@/components/rentals/form/Geosearch.vue";
 import { ref, onMounted } from "vue";
 
 // Control the visibility of the second card

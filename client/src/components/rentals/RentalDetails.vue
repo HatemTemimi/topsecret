@@ -6,7 +6,7 @@ import { getRentalById } from '@/api/rentals';
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import Marker from '@/components/rentals/map/marker/Marker.vue';
-
+import Map from "@/components/rentals/map/Map.vue";
 // Access the route parameters to fetch the rental ID
 const route = useRoute();
 const rentalId = route.params.id;
@@ -18,7 +18,6 @@ const rental = ref<Rental | null>(null);
 const error = ref<string | null>(null);
 
 const loading = ref(true)
-
 
 const currentCenter = ref([36.8065, 10.181667])
 const zoom = ref(12)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getRentalsByUserId } from "@/api/rentals";
-import RentalCard from "@/components/rentals/RentalCard.vue";
+import RentalCard from "@/components/rentals/grid/RentalCard.vue";
 import type { Rental } from "@/models/rental";
 import { onMounted, ref } from "vue";
 import { useAuthStore } from "@/stores/authStore"; // Import the Pinia store

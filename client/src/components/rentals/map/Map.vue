@@ -1,7 +1,4 @@
 <template>
-  <v-container
-    class="h-[90vh] lg:h-[100%] lg:w-full border border-gray-200 rounded-lg"
-  >
   <v-card class="h-full flex items-center justify-center">
      <v-progress-circular
      class="absolute"
@@ -32,7 +29,6 @@
       </div>
     </l-map>
   </v-card>
-  </v-container>
 </template>
 
 
@@ -43,7 +39,7 @@ import { inject, ref } from "vue";
 import Marker from '@/components/rentals/map/marker/Marker.vue';
 
 // Define props and refs
-const props = defineProps(['center', 'rentals']);
+const props = defineProps(['rentals']);
 const currentCenter = ref([36.8065, 10.181667]);
 const zoom = ref(12);
 
@@ -53,21 +49,6 @@ const setMapReady = ()=>{
     mapReady.value = true;
 }
 
-/*
-const loading = ref(true)
-const updateLoading = ()=>{
-  console.log('map ready..')
-  loading.value = false
-}
-  */
 const loading = inject("loading")
-
-/*
-if (props.center?.lat && props.center?.lng) {
-  currentCenter.value = [props.center.lat, props.center.lng];
-} else {
-  currentCenter.value = ; 
-}
-  */
 
 </script>
